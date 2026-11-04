@@ -2,20 +2,29 @@ package io.github.yxonyx.kapu
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.materialswitch.MaterialSwitch
 
 class MainActivity : AppCompatActivity() {
     private var shown: RuleSet = RuleSet(emptyList())
     private var writing = false
+
+    // A jelek mezője gépelés közben nem ír minden betűnél: fél másodperc csend után ment.
+    private val saver = Handler(Looper.getMainLooper())
+    private val pendingHints = LinkedHashMap<Int, Runnable>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,9 +53,16 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, RulesActivity::class.java))
         }
         findViewById<android.view.View>(R.id.reset_rules).setOnClickListener {
-            RuleStore.reset(this)
-            ping()
-            render()
+            MaterialAlertDialogBuilder(this)
+                .setMessage(R.string.reset_confirm)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(R.string.reset_rules) { _, _ ->
+                    flushHints()
+                    RuleStore.reset(this)
+                    ping()
+                    render()
+                }
+                .show()
         }
     }
 
@@ -59,12 +75,27 @@ class MainActivity : AppCompatActivity() {
         render()
     }
 
+    override fun onPause() {
+        flushHints()
+        super.onPause()
+    }
+
+    private fun flushHints() {
+        val waiting = pendingHints.values.toList()
+        pendingHints.clear()
+        waiting.forEach {
+            saver.removeCallbacks(it)
+            it.run()
+        }
+    }
+
     private fun render() {
         writing = true
         shown = try {
             RuleStore.read(this)
-        } catch (_: Exception) {
-            RuleStore.reset(this)
+        } catch (_: IllegalArgumentException) {
+            RuleStore.recover(this)
+            Toast.makeText(this, R.string.rules_recovered, Toast.LENGTH_LONG).show()
             RuleStore.read(this)
         }
         val list = findViewById<LinearLayout>(R.id.app_list)
@@ -73,10 +104,16 @@ class MainActivity : AppCompatActivity() {
         shown.apps.forEachIndexed { index, rule ->
             val row = inflater.inflate(R.layout.item_app, list, false)
             row.findViewById<TextView>(R.id.label).text = rule.label
-            val installed = DeviceHelp.isInstalled(this, rule.packageName)
+            val health = BlockLog.health(this, rule.packageName)
+            val installed = health != RuleHealth.NOT_INSTALLED
             row.findViewById<TextView>(R.id.pkg).text =
                 if (installed) rule.packageName else "${rule.packageName} · ${getString(R.string.not_installed)}"
             if (!installed) row.alpha = 0.5f
+            row.findViewById<TextView>(R.id.health).apply {
+                val line = if (rule.enabled) healthLine(rule.packageName, health) else null
+                text = line
+                visibility = if (line == null) android.view.View.GONE else android.view.View.VISIBLE
+            }
             val sw = row.findViewById<MaterialSwitch>(R.id.enabled)
             sw.isChecked = rule.enabled
             sw.setOnCheckedChangeListener { _, checked ->
@@ -100,7 +137,13 @@ class MainActivity : AppCompatActivity() {
                         .split(',')
                         .map { it.trim() }
                         .filter { it.isNotEmpty() }
-                    update(index) { it.copy(hints = parts) }
+                    pendingHints.remove(index)?.let(saver::removeCallbacks)
+                    val save = Runnable {
+                        pendingHints.remove(index)
+                        update(index) { it.copy(hints = parts) }
+                    }
+                    pendingHints[index] = save
+                    saver.postDelayed(save, HINT_SAVE_MS)
                 }
             })
             list.addView(row)
@@ -112,13 +155,27 @@ class MainActivity : AppCompatActivity() {
         val apps = shown.apps.toMutableList()
         if (index !in apps.indices) return
         apps[index] = change(apps[index])
-        shown = RuleSet(apps)
+        shown = shown.copy(apps = apps)
         RuleStore.write(this, shown)
         ping()
+    }
+
+    private fun healthLine(packageName: String, health: RuleHealth): String? = when (health) {
+        RuleHealth.NOT_INSTALLED -> null
+        RuleHealth.NEVER_BLOCKED -> getString(R.string.health_never)
+        RuleHealth.APP_UPDATED -> getString(R.string.health_updated)
+        RuleHealth.OK -> getString(
+            R.string.health_last,
+            DateUtils.getRelativeTimeSpanString(BlockLog.lastAt(this, packageName) ?: 0L),
+        )
     }
 
     private fun ping() {
         if (!GateStatus.isEnabled(this)) return
         startService(Intent(this, GateService::class.java))
+    }
+
+    private companion object {
+        const val HINT_SAVE_MS = 500L
     }
 }

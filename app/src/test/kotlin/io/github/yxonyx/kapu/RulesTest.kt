@@ -134,4 +134,13 @@ class RulesTest {
         assertEquals("home", merged.action)
         assertEquals(false, merged.enabled)
     }
+
+    @Test
+    fun healthFlagsAppUpdatesSinceLastBlock() {
+        assertEquals(RuleHealth.NOT_INSTALLED, ruleHealth(null, 5L, 1L))
+        assertEquals(RuleHealth.NEVER_BLOCKED, ruleHealth(2L, null, null))
+        assertEquals(RuleHealth.OK, ruleHealth(2L, 5L, 2L))
+        assertEquals(RuleHealth.APP_UPDATED, ruleHealth(3L, 5L, 2L))
+        assertEquals(RuleHealth.OK, ruleHealth(3L, 5L, null))
+    }
 }

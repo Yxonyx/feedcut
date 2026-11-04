@@ -1,0 +1,14 @@
+version: 2
+updates:
+  # A workflow-ban az actionök SHA-ra vannak rögzítve. A Dependabot a SHA-t és a mellette lévő verziókommentet együtt frissíti.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      gradle:
+        patterns: ["*"]

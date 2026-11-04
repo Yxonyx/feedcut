@@ -3,11 +3,10 @@ package io.github.yxonyx.kapu
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import androidx.core.net.toUri
 
 /**
  * Gyártófüggő beállítóképernyők. A gyártói képernyők rejtettek és változnak,
@@ -20,7 +19,7 @@ object DeviceHelp {
     fun openAppSettings(activity: Activity) {
         val intent = Intent(
             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-            Uri.parse("package:${activity.packageName}"),
+            "package:${activity.packageName}".toUri(),
         )
         activity.startActivity(intent)
     }
@@ -45,12 +44,8 @@ object DeviceHelp {
 
     fun openDontKillMyApp(activity: Activity) {
         val maker = Build.MANUFACTURER.lowercase().replace(' ', '-')
-        tryStart(activity, Intent(Intent.ACTION_VIEW, Uri.parse("https://dontkillmyapp.com/$maker")))
+        tryStart(activity, Intent(Intent.ACTION_VIEW, "https://dontkillmyapp.com/$maker".toUri()))
     }
-
-    /** A manifest <queries> blokkja miatt az indítható appok láthatók, a többi nem. */
-    fun isInstalled(context: Context, packageName: String): Boolean =
-        context.packageManager.getLaunchIntentForPackage(packageName) != null
 
     private fun tryStart(activity: Activity, intent: Intent): Boolean = try {
         activity.startActivity(intent)

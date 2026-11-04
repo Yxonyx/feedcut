@@ -27,4 +27,9 @@
     <string name="err_not_object">apps[%1$d] is not an object.</string>
     <string name="err_package">Bad package name at apps[%1$d].</string>
     <string name="err_action">The action must be back or home (%1$s).</string>
+    <string name="reset_confirm">Restore the default rules? Your switches and markers are replaced.</string>
+    <string name="rules_recovered">The rules file was damaged. Kapu saved it as rules.broken.json and restored the default rules.</string>
+    <string name="health_never">Has not closed a screen yet.</string>
+    <string name="health_last">Last closed a screen %1$s.</string>
+    <string name="health_updated">The app was updated since Kapu last closed a screen. If it gets through now, the rule may be broken.</string>
 </resources>

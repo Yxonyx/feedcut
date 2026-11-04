@@ -27,4 +27,9 @@
     <string name="err_not_object">Az apps[%1$d] nem objektum.</string>
     <string name="err_package">Hibás csomagnév az apps[%1$d] helyen.</string>
     <string name="err_action">Az action csak back vagy home lehet (%1$s).</string>
+    <string name="reset_confirm">Visszaállítod a gyári szabályokat? A kapcsolóid és a jeleid felülíródnak.</string>
+    <string name="rules_recovered">A szabályfájl sérült volt. A Kapu elmentette rules.broken.json néven, és visszaállította a gyári szabályokat.</string>
+    <string name="health_never">Még nem zárt be képernyőt.</string>
+    <string name="health_last">Utoljára %1$s zárt be képernyőt.</string>
+    <string name="health_updated">Az app frissült, mióta a Kapu utoljára bezárt benne egy képernyőt. Ha most átjut, a szabály eltörhetett.</string>
 </resources>

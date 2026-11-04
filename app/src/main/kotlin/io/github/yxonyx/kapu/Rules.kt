@@ -120,3 +120,21 @@ fun mergeRules(base: RuleSet?, user: RuleSet, bundled: RuleSet): RuleSet {
     merged.addAll(user.apps.filter { it.packageName !in bundledPkgs })
     return RuleSet(merged, bundled.version)
 }
+
+enum class RuleHealth {
+    NOT_INSTALLED,
+    NEVER_BLOCKED,
+    OK,
+    APP_UPDATED,
+}
+
+/**
+ * Offline jelzés arra, hogy egy szabály talán eltört. Ha az app frissült a legutóbbi
+ * blokkolás óta, és azóta nem volt blokkolás, a jel lehet, hogy már nem létezik.
+ */
+fun ruleHealth(installedVersion: Long?, lastBlockAt: Long?, versionAtBlock: Long?): RuleHealth = when {
+    installedVersion == null -> RuleHealth.NOT_INSTALLED
+    lastBlockAt == null -> RuleHealth.NEVER_BLOCKED
+    versionAtBlock != null && versionAtBlock != installedVersion -> RuleHealth.APP_UPDATED
+    else -> RuleHealth.OK
+}

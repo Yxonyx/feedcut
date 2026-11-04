@@ -2,9 +2,11 @@ package io.github.yxonyx.kapu
 
 import android.content.Context
 import androidx.annotation.StringRes
+import androidx.core.util.AtomicFile
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
+import java.io.IOException
 
 /** Hibás szabályfájl. Az üzenet erőforrásból jön, hogy minden nyelven olvasható legyen. */
 class RuleError(@StringRes val res: Int, vararg val args: Any) : IllegalArgumentException()
@@ -19,20 +21,20 @@ object RuleStore {
         val target = file(context)
         if (!target.exists()) {
             reset(context)
-            return parse(target.readText())
+            return parse(load(target))
         }
-        val user = parse(target.readText())
+        val user = parse(load(target))
         val bundled = parse(assetText(context))
         if (bundled.version <= user.version) return user
         // Az app frissült, és újabb gyári jeleket hozott.
         val base = try {
-            baseFile(context).takeIf { it.exists() }?.let { parse(it.readText()) }
+            baseFile(context).takeIf { it.exists() }?.let { parse(load(it)) }
         } catch (_: IllegalArgumentException) {
             null
         }
         val merged = mergeRules(base, user, bundled)
-        target.writeText(toJson(merged))
-        baseFile(context).writeText(assetText(context))
+        save(target, toJson(merged))
+        save(baseFile(context), assetText(context))
         return merged
     }
 
@@ -44,7 +46,7 @@ object RuleStore {
 
     fun writeRaw(context: Context, raw: String) {
         parse(raw)
-        file(context).writeText(raw.trim() + "\n")
+        save(file(context), raw.trim() + "\n")
     }
 
     fun write(context: Context, rules: RuleSet) {
@@ -53,8 +55,39 @@ object RuleStore {
 
     fun reset(context: Context) {
         val raw = assetText(context)
-        file(context).writeText(raw)
-        baseFile(context).writeText(raw)
+        save(file(context), raw)
+        save(baseFile(context), raw)
+    }
+
+    /**
+     * A sérült fájlt félreteszi (rules.broken.json), és a gyári szabályokat állítja vissza.
+     * Így a felhasználó saját jelei nem vesznek el nyomtalanul.
+     */
+    fun recover(context: Context) {
+        val target = file(context)
+        if (target.exists()) target.copyTo(File(context.filesDir, "rules.broken.json"), overwrite = true)
+        reset(context)
+    }
+
+    /** Atomikus írás: egy félbeszakadt mentés nem hagy félkész fájlt. */
+    private fun save(target: File, text: String) {
+        val atomic = AtomicFile(target)
+        val out = atomic.startWrite()
+        try {
+            out.write(text.toByteArray())
+            atomic.finishWrite(out)
+        } catch (e: IOException) {
+            atomic.failWrite(out)
+            throw e
+        }
+    }
+
+    private fun load(target: File): String = String(AtomicFile(target).readFully())
+
+    /** A szerkesztőnek: a mentett fájl, vagy ha még nincs, a gyári. */
+    fun text(context: Context): String {
+        val target = file(context)
+        return if (target.exists()) load(target) else assetText(context)
     }
 
     fun assetText(context: Context): String =
