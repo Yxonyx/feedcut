@@ -26,9 +26,12 @@ def bars(dx, dy):
     for cy in (40, 54, 68):
         x0, x1, r = 31 + dx, 77 + dx, 1.5
         y0, y1 = cy - 5 + dy, cy + 5 + dy
+        # Four corner arcs. One arc per end would be scaled up to a half circle (a pill).
         out.append(
-            f"M{x0 + r:.2f},{y0:.2f} H{x1 - r:.2f} A{r},{r} 0 0 1 {x1 - r:.2f},{y1:.2f} "
-            f"H{x0 + r:.2f} A{r},{r} 0 0 1 {x0 + r:.2f},{y0:.2f} Z"
+            f"M{x0 + r:.2f},{y0:.2f} H{x1 - r:.2f} A{r},{r} 0 0 1 {x1:.2f},{y0 + r:.2f} "
+            f"V{y1 - r:.2f} A{r},{r} 0 0 1 {x1 - r:.2f},{y1:.2f} "
+            f"H{x0 + r:.2f} A{r},{r} 0 0 1 {x0:.2f},{y1 - r:.2f} "
+            f"V{y0 + r:.2f} A{r},{r} 0 0 1 {x0 + r:.2f},{y0:.2f} Z"
         )
     return " ".join(out)
 
