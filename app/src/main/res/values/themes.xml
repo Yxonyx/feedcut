@@ -1,10 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.Feedcut" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">#1B3A2F</item>
-        <item name="colorOnPrimary">#F4F1EA</item>
+        <item name="colorPrimary">@color/c_primary</item>
+        <item name="colorOnPrimary">@color/blaze_white</item>
+        <item name="colorPrimaryContainer">@color/c_primary</item>
+        <item name="colorOnPrimaryContainer">@color/blaze_white</item>
+        <item name="colorSecondary">@color/c_bar</item>
+        <item name="colorOnSecondary">@color/blaze_white</item>
+        <item name="android:colorBackground">@color/c_bg</item>
+        <item name="colorSurface">@color/c_bg</item>
+        <item name="colorOnSurface">@color/c_ink</item>
+        <item name="colorOnSurfaceVariant">@color/c_muted</item>
+        <item name="colorSurfaceContainerHighest">@color/c_line</item>
+        <item name="colorSurfaceContainerHigh">@color/c_surface</item>
+        <item name="colorOutline">@color/c_muted</item>
+        <item name="colorOutlineVariant">@color/c_line</item>
+        <item name="android:windowBackground">@color/c_bg</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="27">always</item>
+        <item name="materialButtonStyle">@style/Widget.Feedcut.Button</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.Feedcut.Button.Outlined</item>
+    </style>
+
+    <style name="Widget.Feedcut.Button" parent="Widget.Material3.Button">
+        <item name="android:textAppearance">@style/TextAppearance.Feedcut.ButtonLabel</item>
+        <item name="shapeAppearance">@style/Shape.Feedcut.Blaze</item>
+    </style>
+
+    <style name="Widget.Feedcut.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textAppearance">@style/TextAppearance.Feedcut.ButtonLabel</item>
+        <item name="android:textColor">@color/c_ink</item>
+        <item name="strokeColor">@color/c_muted</item>
+        <item name="shapeAppearance">@style/Shape.Feedcut.Blaze</item>
+    </style>
+
+    <!-- Trail signs are cut boards, not pills. -->
+    <style name="Shape.Feedcut.Blaze" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">3dp</item>
+    </style>
+
+    <style name="TextAppearance.Feedcut.ButtonLabel" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/barlow</item>
+        <item name="fontFamily">@font/barlow</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:letterSpacing">0.04</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="TextAppearance.Feedcut.Wordmark" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">@font/barlow</item>
+        <item name="fontFamily">@font/barlow</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:textColor">@color/c_ink</item>
+    </style>
+
+    <style name="TextAppearance.Feedcut.Status" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">@font/barlow</item>
+        <item name="fontFamily">@font/barlow</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">21sp</item>
+        <item name="android:textColor">@color/c_ink</item>
+    </style>
+
+    <style name="TextAppearance.Feedcut.Count" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="android:fontFamily">@font/barlow_condensed_extrabold</item>
+        <item name="fontFamily">@font/barlow_condensed_extrabold</item>
+        <item name="android:textSize">112sp</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="android:textColor">@color/c_ink</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.Feedcut.CountLabel" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">@font/barlow</item>
+        <item name="fontFamily">@font/barlow</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/c_ink</item>
+    </style>
+
+    <style name="TextAppearance.Feedcut.Section" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:fontFamily">@font/barlow</item>
+        <item name="fontFamily">@font/barlow</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/c_muted</item>
+    </style>
+
+    <style name="TextAppearance.Feedcut.Body" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textColor">@color/c_ink</item>
+    </style>
+
+    <style name="TextAppearance.Feedcut.Small" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/c_muted</item>
     </style>
 </resources>

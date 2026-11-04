@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="14dp">
+
+    <!-- A waymark on the trail: filled once the step is done. -->
+    <View
+        android:id="@+id/mark"
+        android:layout_width="14dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="14dp"
+        tools:background="@drawable/waymark_todo" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Feedcut.Body"
+            tools:text="Turn Feedcut on in Accessibility" />
+
+        <TextView
+            android:id="@+id/detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.Feedcut.Small"
+            tools:text="Greyed out? App settings, the three dots, Allow restricted settings." />
+
+        <LinearLayout
+            android:id="@+id/actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical" />
+    </LinearLayout>
+</LinearLayout>

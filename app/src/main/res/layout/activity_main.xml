@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -8,88 +9,138 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:paddingHorizontal="20dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="24dp">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textSize="32sp" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/wordmark"
+                android:textAppearance="@style/TextAppearance.Feedcut.Wordmark" />
+
+            <TextView
+                android:id="@+id/setup_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Feedcut.Small"
+                tools:text="Setup done" />
+        </LinearLayout>
+
+        <io.github.yxonyx.feedcut.BlazeView
+            android:id="@+id/blaze"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            android:importantForAccessibility="no" />
 
         <TextView
             android:id="@+id/status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:textSize="16sp" />
+            android:accessibilityLiveRegion="polite"
+            android:textAppearance="@style/TextAppearance.Feedcut.Status"
+            tools:text="On. Cutting 4 feeds." />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:baselineAligned="false"
+            android:gravity="bottom"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Feedcut.Count"
+                tools:text="42" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:id="@+id/count_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Feedcut.CountLabel"
+                    tools:text="feeds cut today" />
+
+                <TextView
+                    android:id="@+id/kept"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Feedcut.CountLabel"
+                    tools:text="≈ 42 min kept" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/estimate_note"
+                    android:textAppearance="@style/TextAppearance.Feedcut.Small" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/setup_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="36dp"
+                android:layout_marginBottom="4dp"
+                android:accessibilityHeading="true"
+                android:text="@string/setup_title"
+                android:textAppearance="@style/TextAppearance.Feedcut.Section" />
+
+            <LinearLayout
+                android:id="@+id/setup_steps"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/today"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="36dp"
+            android:layout_marginBottom="10dp"
+            android:accessibilityHeading="true"
+            android:text="@string/week_title"
+            android:textAppearance="@style/TextAppearance.Feedcut.Section" />
+
+        <io.github.yxonyx.feedcut.WeekView
+            android:id="@+id/week"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="@string/lead" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/restricted_hint" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/open_access"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/open_access" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/open_settings"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/open_settings" />
-
-        <TextView
-            android:id="@+id/battery_hint"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/battery_hint" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/open_battery"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/open_battery" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/open_autostart"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/open_autostart"
-            android:visibility="gone" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/open_dontkill"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/open_dontkill" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/hints_help" />
+            android:layout_marginTop="36dp"
+            android:layout_marginBottom="4dp"
+            android:accessibilityHeading="true"
+            android:text="@string/apps_title"
+            android:textAppearance="@style/TextAppearance.Feedcut.Section" />
 
         <LinearLayout
             android:id="@+id/app_list"
@@ -97,19 +148,31 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/edit_json"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="@string/edit_json" />
+            android:layout_height="1dp"
+            android:background="@color/c_line" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/reset_rules"
-            style="@style/Widget.Material3.Button.TextButton"
+        <TextView
+            android:id="@+id/advanced"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/reset_rules" />
+            android:background="?attr/selectableItemBackground"
+            android:minHeight="56dp"
+            android:gravity="center_vertical"
+            android:text="@string/advanced_row"
+            android:textAppearance="@style/TextAppearance.Feedcut.Body" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/c_line" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/lead"
+            android:textAppearance="@style/TextAppearance.Feedcut.Small" />
     </LinearLayout>
 </ScrollView>

@@ -2,159 +2,184 @@ package io.github.yxonyx.feedcut
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.os.PowerManager
 import android.provider.Settings
-import android.text.Editable
-import android.text.TextWatcher
 import android.text.format.DateUtils
 import android.view.LayoutInflater
-import android.widget.EditText
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.button.MaterialButtonToggleGroup
+import androidx.core.content.ContextCompat
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.materialswitch.MaterialSwitch
 
 class MainActivity : AppCompatActivity() {
     private var shown: RuleSet = RuleSet(emptyList())
     private var writing = false
 
-    // The hints field does not save on every keystroke, only after half a second of quiet.
-    private val saver = Handler(Looper.getMainLooper())
-    private val pendingHints = LinkedHashMap<Int, Runnable>()
+    // One filled button on the screen: the next step to take.
+    private var primaryUsed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         fitScreen()
-        findViewById<android.view.View>(R.id.open_access).setOnClickListener {
-            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-        }
-        findViewById<android.view.View>(R.id.open_settings).setOnClickListener {
-            DeviceHelp.openAppSettings(this)
-        }
-        findViewById<android.view.View>(R.id.open_battery).setOnClickListener {
-            DeviceHelp.openBattery(this)
-        }
-        findViewById<android.view.View>(R.id.open_dontkill).setOnClickListener {
-            DeviceHelp.openDontKillMyApp(this)
-        }
-        if (DeviceHelp.isXiaomi) {
-            findViewById<TextView>(R.id.battery_hint).setText(R.string.battery_hint_xiaomi)
-            findViewById<android.view.View>(R.id.open_autostart).apply {
-                visibility = android.view.View.VISIBLE
-                setOnClickListener { DeviceHelp.openAutostart(this@MainActivity) }
-            }
-        }
-        findViewById<android.view.View>(R.id.edit_json).setOnClickListener {
-            startActivity(Intent(this, RulesActivity::class.java))
-        }
-        findViewById<android.view.View>(R.id.reset_rules).setOnClickListener {
-            MaterialAlertDialogBuilder(this)
-                .setMessage(R.string.reset_confirm)
-                .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(R.string.reset_rules) { _, _ ->
-                    flushHints()
-                    RuleStore.reset(this)
-                    ping()
-                    render()
-                }
-                .show()
+        findViewById<View>(R.id.advanced).setOnClickListener {
+            startActivity(Intent(this, AdvancedActivity::class.java))
         }
     }
 
     override fun onResume() {
         super.onResume()
-        val status = findViewById<TextView>(R.id.status)
-        status.setText(
-            when {
-                !GateStatus.isEnabled(this) -> R.string.status_off
-                !GateStatus.isRunning(this) -> R.string.status_stuck
-                else -> R.string.status_on
-            },
-        )
-        findViewById<TextView>(R.id.today).text =
-            getString(R.string.today_count, DayCount.today(this))
-        render()
-    }
-
-    override fun onPause() {
-        flushHints()
-        super.onPause()
-    }
-
-    private fun flushHints() {
-        val waiting = pendingHints.values.toList()
-        pendingHints.clear()
-        waiting.forEach {
-            saver.removeCallbacks(it)
-            it.run()
-        }
-    }
-
-    private fun render() {
-        writing = true
-        shown = try {
-            RuleStore.read(this)
-        } catch (_: IllegalArgumentException) {
-            RuleStore.recover(this)
+        shown = RuleStore.readForUi(this) {
             Toast.makeText(this, R.string.rules_recovered, Toast.LENGTH_LONG).show()
-            RuleStore.read(this)
         }
+        renderStatus()
+        renderToday()
+        renderSetup()
+        renderApps()
+    }
+
+    private fun renderStatus() {
+        val state = GateStatus.state(this)
+        val watching = shown.apps.count { it.enabled && BlockLog.installedVersion(this, it.packageName) != null }
+        findViewById<BlazeView>(R.id.blaze).state = state
+        findViewById<TextView>(R.id.status).text = when (state) {
+            GateState.ON -> resources.getQuantityString(R.plurals.status_on, watching, watching)
+            GateState.OFF -> getString(R.string.status_off)
+            GateState.STUCK -> getString(R.string.status_stuck)
+        }
+    }
+
+    private fun renderToday() {
+        val cuts = DayCount.today(this)
+        findViewById<TextView>(R.id.count).text = java.text.NumberFormat.getIntegerInstance().format(cuts)
+        findViewById<TextView>(R.id.count_label).text = resources.getQuantityString(R.plurals.count_label, cuts)
+        findViewById<TextView>(R.id.kept).text = getString(R.string.kept, minutesKept(cuts))
+        findViewById<WeekView>(R.id.week).show(DayCount.lastDays(this, 7))
+    }
+
+    /** Setup shows as waymarks only until the steps Feedcut can check are done. */
+    private fun renderSetup() {
+        val state = GateStatus.state(this)
+        val accessOk = state == GateState.ON
+        val batteryOk = getSystemService(PowerManager::class.java)?.isIgnoringBatteryOptimizations(packageName) == true
+        val done = listOf(accessOk, batteryOk).count { it }
+        findViewById<TextView>(R.id.setup_state).text =
+            if (done == 2) getString(R.string.setup_done) else getString(R.string.setup_progress, done, 2)
+        val block = findViewById<View>(R.id.setup_block)
+        block.visibility = if (done == 2) View.GONE else View.VISIBLE
+        if (done == 2) return
+        val steps = findViewById<LinearLayout>(R.id.setup_steps)
+        steps.removeAllViews()
+        primaryUsed = false
+        step(
+            steps,
+            R.string.step_access,
+            done = accessOk,
+            detail = when (state) {
+                GateState.OFF -> getString(R.string.step_access_off)
+                GateState.STUCK -> getString(R.string.step_access_stuck)
+                GateState.ON -> null
+            },
+            actions = if (accessOk) emptyList() else listOf(
+                R.string.open_access to { startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) },
+                R.string.open_settings to { DeviceHelp.openAppSettings(this) },
+            ),
+        )
+        step(
+            steps,
+            R.string.step_battery,
+            done = batteryOk,
+            detail = if (batteryOk) null else getString(
+                if (DeviceHelp.isXiaomi) R.string.step_battery_xiaomi else R.string.step_battery_todo,
+            ),
+            actions = if (batteryOk) emptyList() else listOf(R.string.open_battery to { DeviceHelp.openBattery(this) }),
+        )
+        if (DeviceHelp.isXiaomi) {
+            step(
+                steps,
+                R.string.step_autostart,
+                done = false,
+                detail = getString(R.string.step_autostart_detail),
+                actions = listOf(R.string.open_autostart to { DeviceHelp.openAutostart(this) }),
+            )
+        }
+    }
+
+    private fun step(
+        parent: LinearLayout,
+        title: Int,
+        done: Boolean,
+        detail: String?,
+        actions: List<Pair<Int, () -> Unit>>,
+    ) {
+        val row = LayoutInflater.from(this).inflate(R.layout.item_setup_step, parent, false)
+        row.findViewById<View>(R.id.mark).setBackgroundResource(if (done) R.drawable.waymark_done else R.drawable.waymark_todo)
+        row.findViewById<TextView>(R.id.title).setText(title)
+        row.findViewById<TextView>(R.id.detail).apply {
+            text = detail
+            visibility = if (detail == null) View.GONE else View.VISIBLE
+        }
+        val bar = row.findViewById<LinearLayout>(R.id.actions)
+        bar.visibility = if (actions.isEmpty()) View.GONE else View.VISIBLE
+        actions.forEachIndexed { i, (label, run) ->
+            val primary = i == 0 && !primaryUsed
+            if (primary) primaryUsed = true
+            val style = if (primary) com.google.android.material.R.attr.materialButtonStyle
+            else com.google.android.material.R.attr.materialButtonOutlinedStyle
+            val button = MaterialButton(this, null, style)
+            button.setText(label)
+            button.maxLines = 1
+            button.setOnClickListener { run() }
+            val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            if (i > 0) params.topMargin = (4 * resources.displayMetrics.density).toInt()
+            bar.addView(button, params)
+        }
+        parent.addView(row)
+    }
+
+    private fun renderApps() {
+        writing = true
         val list = findViewById<LinearLayout>(R.id.app_list)
         list.removeAllViews()
         val inflater = LayoutInflater.from(this)
         shown.apps.forEachIndexed { index, rule ->
-            val row = inflater.inflate(R.layout.item_app, list, false)
+            val row = inflater.inflate(R.layout.item_app_row, list, false)
             row.findViewById<TextView>(R.id.label).text = rule.label
             val health = BlockLog.health(this, rule.packageName)
-            val installed = health != RuleHealth.NOT_INSTALLED
-            row.findViewById<TextView>(R.id.pkg).text =
-                if (installed) rule.packageName else "${rule.packageName} · ${getString(R.string.not_installed)}"
-            if (!installed) row.alpha = 0.5f
-            row.findViewById<TextView>(R.id.health).apply {
-                val line = if (rule.enabled) healthLine(rule.packageName, health) else null
-                text = line
-                visibility = if (line == null) android.view.View.GONE else android.view.View.VISIBLE
+            val detail = row.findViewById<TextView>(R.id.detail)
+            detail.text = detailLine(rule, health)
+            if (rule.enabled && health == RuleHealth.APP_UPDATED) {
+                detail.setTextColor(ContextCompat.getColor(this, R.color.c_warn))
             }
+            if (health == RuleHealth.NOT_INSTALLED) row.alpha = 0.55f
             val sw = row.findViewById<MaterialSwitch>(R.id.enabled)
             sw.isChecked = rule.enabled
+            sw.contentDescription = rule.label
             sw.setOnCheckedChangeListener { _, checked ->
                 if (!writing) update(index) { it.copy(enabled = checked) }
             }
-            val group = row.findViewById<MaterialButtonToggleGroup>(R.id.action)
-            group.check(if (rule.action == "home") R.id.action_home else R.id.action_back)
-            group.addOnButtonCheckedListener { _, checkedId, isChecked ->
-                if (writing || !isChecked) return@addOnButtonCheckedListener
-                val action = if (checkedId == R.id.action_home) "home" else "back"
-                update(index) { it.copy(action = action) }
-            }
-            val hints = row.findViewById<EditText>(R.id.hints)
-            hints.setText(rule.hints.joinToString(", "))
-            hints.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
-                override fun afterTextChanged(s: Editable?) {
-                    if (writing) return
-                    val parts = s?.toString().orEmpty()
-                        .split(',')
-                        .map { it.trim() }
-                        .filter { it.isNotEmpty() }
-                    pendingHints.remove(index)?.let(saver::removeCallbacks)
-                    val save = Runnable {
-                        pendingHints.remove(index)
-                        update(index) { it.copy(hints = parts) }
-                    }
-                    pendingHints[index] = save
-                    saver.postDelayed(save, HINT_SAVE_MS)
-                }
-            })
             list.addView(row)
         }
         writing = false
+    }
+
+    /** Fixed furniture for every app: what it removes, then its state. */
+    private fun detailLine(rule: AppRule, health: RuleHealth): String {
+        val state = when {
+            health == RuleHealth.NOT_INSTALLED -> getString(R.string.not_installed)
+            !rule.enabled -> getString(R.string.detail_off)
+            health == RuleHealth.APP_UPDATED -> getString(R.string.health_updated)
+            health == RuleHealth.NEVER_BLOCKED -> getString(R.string.health_never)
+            else -> getString(
+                R.string.health_last,
+                DateUtils.getRelativeTimeSpanString(BlockLog.lastAt(this, rule.packageName) ?: 0L),
+            )
+        }
+        return if (rule.note.isEmpty()) state else "${rule.note} · $state"
     }
 
     private fun update(index: Int, change: (AppRule) -> AppRule) {
@@ -163,25 +188,8 @@ class MainActivity : AppCompatActivity() {
         apps[index] = change(apps[index])
         shown = shown.copy(apps = apps)
         RuleStore.write(this, shown)
-        ping()
-    }
-
-    private fun healthLine(packageName: String, health: RuleHealth): String? = when (health) {
-        RuleHealth.NOT_INSTALLED -> null
-        RuleHealth.NEVER_BLOCKED -> getString(R.string.health_never)
-        RuleHealth.APP_UPDATED -> getString(R.string.health_updated)
-        RuleHealth.OK -> getString(
-            R.string.health_last,
-            DateUtils.getRelativeTimeSpanString(BlockLog.lastAt(this, packageName) ?: 0L),
-        )
-    }
-
-    private fun ping() {
-        if (!GateStatus.isEnabled(this)) return
-        startService(Intent(this, GateService::class.java))
-    }
-
-    private companion object {
-        const val HINT_SAVE_MS = 500L
+        GateStatus.ping(this)
+        renderApps()
+        renderStatus()
     }
 }

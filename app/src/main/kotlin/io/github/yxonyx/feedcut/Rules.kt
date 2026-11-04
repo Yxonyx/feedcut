@@ -21,6 +21,8 @@ data class AppRule(
     val action: String,
     val hints: List<String>,
     val allowTabs: List<String> = emptyList(),
+    /** What the rule removes, in a few words for the main screen ("Reels", "Only Marketplace"). */
+    val note: String = "",
 )
 
 /** A tab from the bottom bar: only the first part of its label ("Marketplace") and whether it is selected. */
@@ -120,6 +122,7 @@ fun mergeRules(base: RuleSet?, user: RuleSet, bundled: RuleSet): RuleSet {
                 action = pick(AppRule::action, keepWithoutBase = true),
                 hints = pick(AppRule::hints, keepWithoutBase = false),
                 allowTabs = pick(AppRule::allowTabs, keepWithoutBase = false),
+                note = pick(AppRule::note, keepWithoutBase = false),
             )
         )
     }
@@ -145,3 +148,24 @@ fun ruleHealth(installedVersion: Long?, lastBlockAt: Long?, versionAtBlock: Long
     versionAtBlock != null && versionAtBlock != installedVersion -> RuleHealth.APP_UPDATED
     else -> RuleHealth.OK
 }
+
+enum class GateState {
+    OFF,
+    STUCK,
+    ON,
+}
+
+/** Switched on in Settings is not enough: Android has to be running the service too. */
+fun gateState(enabled: Boolean, running: Boolean): GateState = when {
+    !enabled -> GateState.OFF
+    !running -> GateState.STUCK
+    else -> GateState.ON
+}
+
+/**
+ * Minutes a closed screen is assumed to save. Feedcut cannot know how long someone would
+ * have scrolled, so every figure built on this is shown as an estimate with this number.
+ */
+const val MINUTES_PER_CUT = 1
+
+fun minutesKept(cuts: Int): Int = cuts * MINUTES_PER_CUT

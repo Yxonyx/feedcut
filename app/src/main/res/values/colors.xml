@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Fixed world colours: the trail blaze and the granite it is painted on. -->
+    <color name="granite">#17191A</color>
+    <color name="blaze_white">#F4F2EC</color>
+    <color name="blaze_red">#D7261E</color>
+    <color name="trail_yellow">#F2B84B</color>
+
+    <!-- Light scheme. values-night holds the dark one. -->
+    <color name="c_bg">#EDEBE4</color>
+    <color name="c_surface">#F7F6F1</color>
+    <color name="c_ink">#17191A</color>
+    <color name="c_muted">#55574F</color>
+    <color name="c_line">#CFCCC2</color>
+    <color name="c_primary">#B81F18</color>
+    <color name="c_warn">#7A4E00</color>
+    <color name="c_bar">#4B6B45</color>
+</resources>

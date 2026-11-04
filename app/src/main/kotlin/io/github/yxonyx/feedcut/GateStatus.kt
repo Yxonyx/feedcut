@@ -1,24 +1,28 @@
 package io.github.yxonyx.feedcut
 
 import android.accessibilityservice.AccessibilityServiceInfo
+import android.content.ComponentName
 import android.content.Context
-import android.view.accessibility.AccessibilityManager
+import android.content.Intent
 import android.provider.Settings
-import android.text.TextUtils
+import android.view.accessibility.AccessibilityManager
 
 object GateStatus {
+    private fun self(context: Context) = ComponentName(context, GateService::class.java)
+
+    /**
+     * Android stores service names in full or short form ("pkg/.GateService"), so compare
+     * parsed component names, never the strings.
+     */
+    private fun isSelf(context: Context, flat: String): Boolean =
+        ComponentName.unflattenFromString(flat) == self(context)
+
     fun isEnabled(context: Context): Boolean {
-        val expected = "${context.packageName}/${GateService::class.java.name}"
         val flat = Settings.Secure.getString(
             context.contentResolver,
             Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
         ) ?: return false
-        val splitter = TextUtils.SimpleStringSplitter(':')
-        splitter.setString(flat)
-        for (part in splitter) {
-            if (part.equals(expected, ignoreCase = true)) return true
-        }
-        return false
+        return flat.split(':').any { isSelf(context, it) }
     }
 
     /**
@@ -27,8 +31,15 @@ object GateStatus {
      */
     fun isRunning(context: Context): Boolean {
         val manager = context.getSystemService(AccessibilityManager::class.java) ?: return false
-        val expected = "${context.packageName}/${GateService::class.java.name}"
         return manager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
-            .any { it.id.equals(expected, ignoreCase = true) }
+            .any { isSelf(context, it.id) }
+    }
+
+    fun state(context: Context): GateState = gateState(isEnabled(context), isRunning(context))
+
+    /** Tells the running service to reload the rules file now. */
+    fun ping(context: Context) {
+        if (!isEnabled(context)) return
+        context.startService(Intent(context, GateService::class.java))
     }
 }

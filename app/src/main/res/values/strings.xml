@@ -1,36 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Feedcut</string>
+    <string name="wordmark">FEEDCUT</string>
     <string name="service_label">Feedcut</string>
     <string name="service_description">Feedcut only watches the apps you switch on in Feedcut. When it sees a configured screen, it presses Back or Home. It does not read messages, passwords or images, and it has no internet access.</string>
-    <string name="lead">Your rules stay on this phone. The app has no internet permission, no account and no store, and backup is off.</string>
-    <string name="open_access">Accessibility settings</string>
+
+    <plurals name="status_on">
+        <item quantity="one">On. Cutting %1$d feed.</item>
+        <item quantity="other">On. Cutting %1$d feeds.</item>
+    </plurals>
+    <string name="status_off">Off. The feeds are open.</string>
+    <string name="status_stuck">Switched on, but Android stopped it. Turn it off and on.</string>
+
+    <plurals name="count_label">
+        <item quantity="one">feed cut today</item>
+        <item quantity="other">feeds cut today</item>
+    </plurals>
+    <string name="kept">≈ %1$d min kept</string>
+    <string name="estimate_note">Estimate: 1 min per cut.</string>
+    <string name="week_title">Last 7 days</string>
+    <string name="apps_title">Apps</string>
+
+    <string name="setup_title">Setup</string>
+    <string name="setup_done">Setup done</string>
+    <string name="setup_progress">Setup %1$d of %2$d</string>
+    <string name="step_access">Turn Feedcut on in Accessibility</string>
+    <string name="step_access_off">Greyed out? Open App settings, tap the three dots, then Allow restricted settings.</string>
+    <string name="step_access_stuck">Android stopped it. Switch Feedcut off and on again.</string>
+    <string name="step_battery">Battery: Unrestricted</string>
+    <string name="step_battery_todo">Without it, the phone stops Feedcut after a few minutes and the feeds come back.</string>
+    <string name="step_battery_xiaomi">Xiaomi: Battery saver, No restrictions. Without it HyperOS freezes Feedcut after a few minutes.</string>
+    <string name="step_autostart">Autostart on (Xiaomi)</string>
+    <string name="step_autostart_detail">Feedcut cannot check this one. Turn it on once.</string>
+    <string name="open_access">Accessibility</string>
     <string name="open_settings">App settings</string>
+    <string name="open_battery">Battery settings</string>
+    <string name="open_autostart">Autostart</string>
+
+    <string name="detail_off">Off</string>
+    <string name="health_never">Nothing cut yet</string>
+    <string name="health_last">last cut %1$s</string>
+    <string name="health_updated">Updated since the last cut. The rule may be broken.</string>
+    <string name="not_installed">Not installed</string>
+
+    <string name="advanced_row">Advanced: screen markers and rules file</string>
+    <string name="advanced_title">Advanced</string>
+    <string name="lead">No internet permission. Your rules and counts stay on this phone.</string>
+
     <string name="edit_json">Rules file</string>
     <string name="reset_rules">Restore default rules</string>
     <string name="hints_help">Screen markers, comma separated. Empty: leave the app alone. A star (*): block the whole app as soon as it opens.</string>
     <string name="action_back">Back</string>
     <string name="action_home">Home</string>
     <string name="save">Save</string>
-    <string name="status_on">Feedcut is on.</string>
-    <string name="status_off">Feedcut is off. Turn it on in Accessibility settings.</string>
-    <string name="today_count">Screens closed today: %1$d</string>
-    <string name="restricted_hint">If Feedcut is greyed out in Accessibility settings: App settings, the three dots at the top right, Allow restricted settings. Android 13 and later do this for every app installed outside a store.</string>
-    <string name="battery_hint">Many phones stop background apps after a few minutes, and then Feedcut gets no events. In App settings, set battery usage to Unrestricted.</string>
-    <string name="battery_hint_xiaomi">On Xiaomi, Redmi and POCO this is required: Battery saver, No restrictions, and Autostart on. Without it HyperOS freezes Feedcut after a few minutes.</string>
-    <string name="open_battery">Battery settings</string>
-    <string name="open_autostart">Autostart</string>
+    <string name="battery_hint_xiaomi">On Xiaomi, Redmi and POCO, Feedcut needs Battery saver: No restrictions and Autostart on. Without them HyperOS freezes it after a few minutes.</string>
     <string name="open_dontkill">Your phone on dontkillmyapp.com</string>
-    <string name="not_installed">not installed</string>
+    <string name="reset_confirm">Restore the default rules? Your switches and markers are replaced.</string>
+    <string name="rules_recovered">The rules file was damaged. Feedcut saved it as rules.broken.json and restored the default rules.</string>
     <string name="err_json">The JSON cannot be read.</string>
     <string name="err_no_apps">The apps list is missing.</string>
     <string name="err_not_object">apps[%1$d] is not an object.</string>
     <string name="err_package">Bad package name at apps[%1$d].</string>
     <string name="err_action">The action must be back or home (%1$s).</string>
-    <string name="reset_confirm">Restore the default rules? Your switches and markers are replaced.</string>
-    <string name="rules_recovered">The rules file was damaged. Feedcut saved it as rules.broken.json and restored the default rules.</string>
-    <string name="health_never">Has not closed a screen yet.</string>
-    <string name="health_last">Last closed a screen %1$s.</string>
-    <string name="health_updated">The app was updated since Feedcut last closed a screen. If it gets through now, the rule may be broken.</string>
-    <string name="status_stuck">Feedcut is switched on, but Android is not running it. Switch it off and on again in Accessibility settings.</string>
 </resources>

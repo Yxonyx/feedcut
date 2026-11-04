@@ -38,6 +38,15 @@ object RuleStore {
         return merged
     }
 
+    /** For screens: a damaged file is set aside and the defaults load, and [onRecovered] says so. */
+    fun readForUi(context: Context, onRecovered: () -> Unit): RuleSet = try {
+        read(context)
+    } catch (_: IllegalArgumentException) {
+        recover(context)
+        onRecovered()
+        read(context)
+    }
+
     fun readQuiet(context: Context): RuleSet = try {
         read(context)
     } catch (_: Exception) {
@@ -119,6 +128,7 @@ object RuleStore {
                     action = action,
                     hints = strings(item.optJSONArray("hints")),
                     allowTabs = strings(item.optJSONArray("allowTabs")),
+                    note = item.optString("note").trim(),
                 )
             )
         }
@@ -149,6 +159,7 @@ object RuleStore {
             if (rule.allowTabs.isNotEmpty()) {
                 item.put("allowTabs", JSONArray(rule.allowTabs))
             }
+            if (rule.note.isNotEmpty()) item.put("note", rule.note)
             apps.put(item)
         }
         return JSONObject().put("version", rules.version).put("apps", apps).toString(2) + "\n"

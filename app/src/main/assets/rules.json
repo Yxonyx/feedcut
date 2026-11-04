@@ -1,9 +1,10 @@
 {
-  "version": 3,
+  "version": 4,
   "apps": [
     {
       "package": "com.instagram.android",
       "label": "Instagram",
+      "note": "Reels",
       "enabled": true,
       "action": "back",
       "hints": ["clips_viewer_view_pager", "clips_viewer", "clips_swipe_refresh"]
@@ -11,6 +12,7 @@
     {
       "package": "com.google.android.youtube",
       "label": "YouTube",
+      "note": "Shorts",
       "enabled": true,
       "action": "back",
       "hints": ["reel_watch_player", "reel_player_page_container", "reel_recycler"]
@@ -18,6 +20,7 @@
     {
       "package": "app.revanced.android.youtube",
       "label": "YouTube ReVanced",
+      "note": "Shorts",
       "enabled": false,
       "action": "back",
       "hints": ["reel_watch_player", "reel_player_page_container"]
@@ -25,6 +28,7 @@
     {
       "package": "com.zhiliaoapp.musically",
       "label": "TikTok",
+      "note": "The video feed",
       "enabled": true,
       "action": "home",
       "hints": ["view_pager_layout_wrapper", "video_player_progress"]
@@ -32,6 +36,7 @@
     {
       "package": "com.ss.android.ugc.trill",
       "label": "TikTok (trill)",
+      "note": "The video feed",
       "enabled": false,
       "action": "home",
       "hints": ["view_pager_layout_wrapper", "video_player_progress"]
@@ -39,6 +44,7 @@
     {
       "package": "com.facebook.katana",
       "label": "Facebook",
+      "note": "Only Marketplace and Groups",
       "enabled": true,
       "action": "back",
       "hints": [],
