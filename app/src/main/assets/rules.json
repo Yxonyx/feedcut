@@ -1,12 +1,12 @@
 {
-  "version": 2,
+  "version": 3,
   "apps": [
     {
       "package": "com.instagram.android",
       "label": "Instagram",
       "enabled": true,
       "action": "back",
-      "hints": ["clips_viewer", "clips_swipe_refresh"]
+      "hints": ["clips_viewer_view_pager", "clips_viewer", "clips_swipe_refresh"]
     },
     {
       "package": "com.google.android.youtube",
@@ -27,14 +27,14 @@
       "label": "TikTok",
       "enabled": true,
       "action": "home",
-      "hints": ["video_player_progress"]
+      "hints": ["view_pager_layout_wrapper", "video_player_progress"]
     },
     {
       "package": "com.ss.android.ugc.trill",
       "label": "TikTok (trill)",
       "enabled": false,
       "action": "home",
-      "hints": ["video_player_progress"]
+      "hints": ["view_pager_layout_wrapper", "video_player_progress"]
     },
     {
       "package": "com.facebook.katana",

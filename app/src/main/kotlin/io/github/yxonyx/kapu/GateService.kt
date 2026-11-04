@@ -10,9 +10,9 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 
 /**
- * Csak a szabályfájlban engedélyezett csomagokat figyeli.
- * Szöveget és képet nem olvas, és nem küld sehova. Leírást csak az allowTabs
- * szabálynál olvas: az alsó fülsor feliratát, más nézetét nem.
+ * Watches only the packages enabled in the rules file.
+ * Reads no text or images and sends nothing anywhere. The only labels it reads are
+ * the bottom tab bar's, for allowTabs rules.
  */
 class GateService : AccessibilityService() {
 
@@ -23,6 +23,8 @@ class GateService : AccessibilityService() {
     private val handler = Handler(Looper.getMainLooper())
     private val timer = CheckTimer(SETTLE_MS, DEBOUNCE_MS)
     private var pendingPackage: String? = null
+    private var lastActPackage: String? = null
+    private var lastActAt = 0L
     private val check: Runnable = Runnable {
         timer.onFire(SystemClock.elapsedRealtime())?.let { wait ->
             handler.postDelayed(check, wait)
@@ -30,7 +32,7 @@ class GateService : AccessibilityService() {
         }
         val target = pendingPackage ?: return@Runnable
         pendingPackage = null
-        // Egy elavult nézet kivételt dobhat. Ettől ne álljon le a szolgáltatás.
+        // A stale node can throw. That must not stop the service.
         try {
             val rule = currentRules().firstOrNull { it.packageName == target } ?: return@Runnable
             if (rule.allowTabs.isNotEmpty()) {
@@ -48,7 +50,7 @@ class GateService : AccessibilityService() {
         applyPackages()
     }
 
-    /** Az app a szabályok mentése után ezzel szól, hogy azonnal olvassa újra a fájlt. */
+    /** The app calls this after saving rules, so the file is read again right away. */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         rulesCheckedAt = -RULES_CHECK_MS
         applyPackages()
@@ -85,19 +87,28 @@ class GateService : AccessibilityService() {
     private fun act(rule: AppRule, tab: AccessibilityNodeInfo? = null) {
         val now = SystemClock.elapsedRealtime()
         if (!timer.canAct(now)) return
+        val sameAppJustNow = rule.packageName == lastActPackage && now - lastActAt < ESCALATE_MS
         val performed = tab?.performAction(AccessibilityNodeInfo.ACTION_CLICK) == true ||
-            when (actionOf(rule)) {
+            when (escalate(actionOf(rule), sameAppJustNow)) {
                 GateAction.BACK -> performGlobalAction(GLOBAL_ACTION_BACK)
                 GateAction.HOME -> performGlobalAction(GLOBAL_ACTION_HOME)
             }
         if (performed) {
             timer.acted(now)
+            lastActPackage = rule.packageName
+            lastActAt = now
             DayCount.bump(this)
             BlockLog.record(this, rule.packageName)
+            // Look again once the debounce is over: Back does not always leave the screen.
+            pendingPackage = rule.packageName
+            timer.onEvent(windowChanged = false)?.let { delay ->
+                handler.removeCallbacks(check)
+                handler.postDelayed(check, delay)
+            }
         }
     }
 
-    /** A fájlt legfeljebb pár másodpercenként nézi meg, nem minden eseménynél. */
+    /** Checks the file every few seconds at most, not on every event. */
     private fun currentRules(): List<AppRule> {
         val now = SystemClock.elapsedRealtime()
         if (now - rulesCheckedAt < RULES_CHECK_MS) return rules
@@ -135,15 +146,15 @@ class GateService : AccessibilityService() {
                 found.forEach { it.recycle() }
                 if (hit) return true
             }
-            // Tartalék a részleges jelekhez: csak a látható ágakat járja be,
-            // és az első találatnál megáll.
+            // Fallback for partial hints: walks only visible branches
+            // and stops at the first match.
             return walk(root, hints, intArrayOf(MAX_NODES), recycleSelf = false)
         } finally {
             root.recycle()
         }
     }
 
-    /** Ha a fülsoron tiltott fül van kijelölve, átkattint az engedélyezettre. */
+    /** If a forbidden tab is selected in the tab bar, taps the allowed one. */
     private fun redirectTabs(rule: AppRule) {
         val root = rootInActiveWindow ?: return
         val tabs = ArrayList<AccessibilityNodeInfo>()
@@ -167,7 +178,7 @@ class GateService : AccessibilityService() {
     ) {
         var keep = false
         try {
-            // A Facebook görgetéskor elrejti az alsó sávot, ezért itt a rejtett ágat is nézzük.
+            // Facebook hides the bottom bar while scrolling, so hidden branches are searched too.
             if (budget[0] <= 0) return
             budget[0]--
             if (node.className?.toString() == TAB_CLASS) {
@@ -209,6 +220,7 @@ class GateService : AccessibilityService() {
         const val DEBOUNCE_MS = 800L
         const val SETTLE_MS = 120L
         const val RULES_CHECK_MS = 3000L
+        const val ESCALATE_MS = 2500L
         const val MAX_NODES = 800
         const val TAB_CLASS = "android.app.ActionBar\$Tab"
     }

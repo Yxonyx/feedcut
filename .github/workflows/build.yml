@@ -6,7 +6,7 @@ on:
     tags: ["v*"]
   pull_request:
 
-# Az actionök commit-SHA-ra vannak rögzítve, mert a release-job az aláíró kulcsot kezeli.
+# Actions are pinned to commit SHAs because the release job handles the signing key.
 permissions:
   contents: read
 
@@ -28,7 +28,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     needs: test
     runs-on: ubuntu-latest
-    # A titkok egy védett környezetben vannak, csak tagre futó jobban.
+    # Secrets live in a protected environment, used only by this tag-only job.
     environment: release
     permissions:
       contents: write

@@ -9,8 +9,8 @@ import android.provider.Settings
 import androidx.core.net.toUri
 
 /**
- * Gyártófüggő beállítóképernyők. A gyártói képernyők rejtettek és változnak,
- * ezért mindegyiknél az App infó a tartalék.
+ * Vendor-specific settings screens. They are hidden and change between versions,
+ * so App info is always the fallback.
  */
 object DeviceHelp {
     val isXiaomi: Boolean

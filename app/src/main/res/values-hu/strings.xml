@@ -32,4 +32,5 @@
     <string name="health_never">Még nem zárt be képernyőt.</string>
     <string name="health_last">Utoljára %1$s zárt be képernyőt.</string>
     <string name="health_updated">Az app frissült, mióta a Kapu utoljára bezárt benne egy képernyőt. Ha most átjut, a szabály eltörhetett.</string>
+    <string name="status_stuck">A Kapu be van kapcsolva, de az Android nem futtatja. A Kisegítő lehetőségekben kapcsold ki, majd be.</string>
 </resources>

@@ -8,13 +8,13 @@ import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 
-/** Hibás szabályfájl. Az üzenet erőforrásból jön, hogy minden nyelven olvasható legyen. */
+/** A bad rules file. The message is a string resource, so it is translated. */
 class RuleError(@StringRes val res: Int, vararg val args: Any) : IllegalArgumentException()
 
 object RuleStore {
     fun file(context: Context): File = File(context.filesDir, "rules.json")
 
-    /** A gyári szabályok másolata, amiből a felhasználó fájlja indult. Az összefésüléshez kell. */
+    /** Copy of the default rules the user's file started from. Needed for the merge. */
     private fun baseFile(context: Context): File = File(context.filesDir, "rules.base.json")
 
     fun read(context: Context): RuleSet {
@@ -26,7 +26,7 @@ object RuleStore {
         val user = parse(load(target))
         val bundled = parse(assetText(context))
         if (bundled.version <= user.version) return user
-        // Az app frissült, és újabb gyári jeleket hozott.
+        // The app was updated and brought newer default rules.
         val base = try {
             baseFile(context).takeIf { it.exists() }?.let { parse(load(it)) }
         } catch (_: IllegalArgumentException) {
@@ -60,8 +60,8 @@ object RuleStore {
     }
 
     /**
-     * A sérült fájlt félreteszi (rules.broken.json), és a gyári szabályokat állítja vissza.
-     * Így a felhasználó saját jelei nem vesznek el nyomtalanul.
+     * Keeps the damaged file as rules.broken.json and restores the default rules,
+     * so the user's own hints are not lost without a trace.
      */
     fun recover(context: Context) {
         val target = file(context)
@@ -69,7 +69,7 @@ object RuleStore {
         reset(context)
     }
 
-    /** Atomikus írás: egy félbeszakadt mentés nem hagy félkész fájlt. */
+    /** Atomic write: an interrupted save never leaves a half-written file. */
     private fun save(target: File, text: String) {
         val atomic = AtomicFile(target)
         val out = atomic.startWrite()
@@ -84,7 +84,7 @@ object RuleStore {
 
     private fun load(target: File): String = String(AtomicFile(target).readFully())
 
-    /** A szerkesztőnek: a mentett fájl, vagy ha még nincs, a gyári. */
+    /** For the editor: the saved file, or the defaults if there is none yet. */
     fun text(context: Context): String {
         val target = file(context)
         return if (target.exists()) load(target) else assetText(context)

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Csak azt nézi, hogy egy szabály appja telepítve van-e. A teljes applistát nem kéri. -->
+    <!-- Only to see whether a rule's app is installed. Kapu does not ask for the full app list. -->
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />

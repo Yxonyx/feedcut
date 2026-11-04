@@ -5,7 +5,7 @@ import android.content.pm.PackageManager
 import androidx.core.content.edit
 import androidx.core.content.pm.PackageInfoCompat
 
-/** Appononként a legutóbbi blokkolás ideje és az app akkori verziója. Csak a telefonon marad. */
+/** Per app: when Kapu last closed a screen, and the app's version at that time. Stays on the phone. */
 object BlockLog {
     private const val PREFS = "kapu_blocks"
 

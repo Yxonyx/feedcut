@@ -1,11 +1,12 @@
 package io.github.yxonyx.kapu
 
 /**
- * Mikor fusson a következő ellenőrzés. Nincs benne Android-hívás, hogy tesztelhető legyen.
+ * When to run the next check. No Android calls, so it can be unit tested.
  *
- * Egy videó másodpercenként sok contentChanged eseményt küld. Ezeket egy ellenőrzéssé
- * vonjuk össze. Ablakváltásnál azonnal nézünk. Egy lépés után a védőidő végéig nem
- * döntünk, de akkor újranézünk, különben egy gyors visszalépés elveszne.
+ * A playing video sends many contentChanged events per second. They are merged into
+ * one check. A window change is checked at once. After an action nothing is decided
+ * until the debounce ends, but then the screen is checked again, otherwise a quick
+ * way back into the blocked screen would be missed.
  */
 class CheckTimer(
     private val settleMs: Long,
@@ -15,14 +16,14 @@ class CheckTimer(
         private set
     private var lastActionAt = -debounceMs
 
-    /** Esemény jött. Ha (újra) ütemezni kell, a késleltetést adja vissza. */
+    /** An event arrived. Returns the delay if a check has to be (re)scheduled. */
     fun onEvent(windowChanged: Boolean): Long? {
         if (!windowChanged && pending) return null
         pending = true
         return if (windowChanged) 0L else settleMs
     }
 
-    /** Lefutott az ütemezett ellenőrzés. Ha a védőidő még tart, ennyi múlva kell újranézni. */
+    /** The scheduled check fired. While the debounce lasts, returns how long to wait before checking again. */
     fun onFire(now: Long): Long? {
         val wait = debounceMs - (now - lastActionAt)
         if (wait > 0) return wait
