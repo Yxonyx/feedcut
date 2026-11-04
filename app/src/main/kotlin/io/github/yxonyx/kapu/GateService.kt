@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 
@@ -16,31 +17,29 @@ import android.view.accessibility.AccessibilityNodeInfo
 class GateService : AccessibilityService() {
 
     private var rulesAt = Long.MIN_VALUE
+    private var rulesCheckedAt = -RULES_CHECK_MS
     private var rules: List<AppRule> = emptyList()
-    private var lastActionAt = 0L
 
-    // Egy videó másodpercenként sok contentChanged eseményt küld. Ezeket egy
-    // ellenőrzéssé vonjuk össze, hogy ne álljanak sorba a fa-bejárások.
     private val handler = Handler(Looper.getMainLooper())
+    private val timer = CheckTimer(SETTLE_MS, DEBOUNCE_MS)
     private var pendingPackage: String? = null
-    private var checkPending = false
     private val check: Runnable = Runnable {
-        checkPending = false
-        val target = pendingPackage ?: return@Runnable
-        // Közvetlenül egy lépés után nem dönt, hanem a védőidő végén újranéz.
-        // Különben egy gyors visszalépés elveszne, ha az app nem küld újabb eseményt.
-        val wait = DEBOUNCE_MS - (SystemClock.elapsedRealtime() - lastActionAt)
-        if (wait > 0) {
-            checkPending = true
+        timer.onFire(SystemClock.elapsedRealtime())?.let { wait ->
             handler.postDelayed(check, wait)
             return@Runnable
         }
+        val target = pendingPackage ?: return@Runnable
         pendingPackage = null
-        val rule = currentRules().firstOrNull { it.packageName == target } ?: return@Runnable
-        if (rule.allowTabs.isNotEmpty()) {
-            redirectTabs(rule)
-        } else if (seesHint(rule)) {
-            act(actionOf(rule))
+        // Egy elavult nézet kivételt dobhat. Ettől ne álljon le a szolgáltatás.
+        try {
+            val rule = currentRules().firstOrNull { it.packageName == target } ?: return@Runnable
+            if (rule.allowTabs.isNotEmpty()) {
+                redirectTabs(rule)
+            } else if (seesHint(rule)) {
+                act(rule)
+            }
+        } catch (e: RuntimeException) {
+            Log.w(TAG, "check failed", e)
         }
     }
 
@@ -49,7 +48,9 @@ class GateService : AccessibilityService() {
         applyPackages()
     }
 
+    /** Az app a szabályok mentése után ezzel szól, hogy azonnal olvassa újra a fájlt. */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        rulesCheckedAt = -RULES_CHECK_MS
         applyPackages()
         return START_NOT_STICKY
     }
@@ -63,14 +64,13 @@ class GateService : AccessibilityService() {
         if (hints.isEmpty() && !tabsOnly) return
         val windowJustChanged = event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
         if (hints.any { it == "*" }) {
-            chooseAction(rule, windowJustChanged, emptyList())?.let(::act)
+            if (chooseAction(rule, windowJustChanged, emptyList()) != null) act(rule)
             return
         }
         pendingPackage = packageName
-        if (windowJustChanged || !checkPending) {
+        timer.onEvent(windowJustChanged)?.let { delay ->
             handler.removeCallbacks(check)
-            checkPending = true
-            handler.postDelayed(check, if (windowJustChanged) 0L else SETTLE_MS)
+            handler.postDelayed(check, delay)
         }
     }
 
@@ -78,24 +78,30 @@ class GateService : AccessibilityService() {
 
     override fun onDestroy() {
         handler.removeCallbacks(check)
+        timer.cancel()
         super.onDestroy()
     }
 
-    private fun act(action: GateAction, tab: AccessibilityNodeInfo? = null) {
+    private fun act(rule: AppRule, tab: AccessibilityNodeInfo? = null) {
         val now = SystemClock.elapsedRealtime()
-        if (now - lastActionAt < DEBOUNCE_MS) return
+        if (!timer.canAct(now)) return
         val performed = tab?.performAction(AccessibilityNodeInfo.ACTION_CLICK) == true ||
-            when (action) {
+            when (actionOf(rule)) {
                 GateAction.BACK -> performGlobalAction(GLOBAL_ACTION_BACK)
                 GateAction.HOME -> performGlobalAction(GLOBAL_ACTION_HOME)
             }
         if (performed) {
-            lastActionAt = now
+            timer.acted(now)
             DayCount.bump(this)
+            BlockLog.record(this, rule.packageName)
         }
     }
 
+    /** A fájlt legfeljebb pár másodpercenként nézi meg, nem minden eseménynél. */
     private fun currentRules(): List<AppRule> {
+        val now = SystemClock.elapsedRealtime()
+        if (now - rulesCheckedAt < RULES_CHECK_MS) return rules
+        rulesCheckedAt = now
         val target = RuleStore.file(this)
         val modified = if (target.exists()) target.lastModified() else 0L
         if (modified != rulesAt) {
@@ -146,7 +152,7 @@ class GateService : AccessibilityService() {
             collectTabs(root, tabs, intArrayOf(MAX_NODES), recycleSelf = false)
             val seen = tabs.map { SeenTab(tabLabel(it.contentDescription), it.isSelected) }
             val target = tabRedirect(rule.allowTabs, seen) ?: return
-            act(actionOf(rule), tabs[target])
+            act(rule, tabs[target])
         } finally {
             tabs.forEach { it.recycle() }
             root.recycle()
@@ -199,8 +205,10 @@ class GateService : AccessibilityService() {
     }
 
     private companion object {
+        const val TAG = "Kapu"
         const val DEBOUNCE_MS = 800L
         const val SETTLE_MS = 120L
+        const val RULES_CHECK_MS = 3000L
         const val MAX_NODES = 800
         const val TAB_CLASS = "android.app.ActionBar\$Tab"
     }

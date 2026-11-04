@@ -12,6 +12,7 @@
         android:layout_weight="1"
         android:fontFamily="monospace"
         android:gravity="top"
+        android:hint="@string/edit_json"
         android:importantForAutofill="no"
         android:inputType="textMultiLine"
         android:scrollbars="vertical" />

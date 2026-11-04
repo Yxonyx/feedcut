@@ -16,6 +16,7 @@ An Android app that closes Instagram Reels, YouTube Shorts and TikTok the moment
 - **Facebook without the feed.** Most blockers either block Facebook or hide Reels. Kapu keeps the parts people need, Marketplace and Groups, and takes away the feed.
 - **No internet permission.** Check `AndroidManifest.xml`: there is no `INTERNET` permission, so Kapu cannot send anything anywhere. No account, no analytics, no remote rules.
 - **The rules are a file you can read.** Every blocked screen is a line in [`rules.json`](app/src/main/assets/rules.json). When an app renames a screen, the fix is a one-line pull request, and the in-app editor lets you fix it on your phone the same day.
+- **It tells you when a rule may have broken.** Kapu remembers the app version at the last screen it closed. If the app updates and nothing has been closed since, the main screen says so, without any network access.
 - **App updates keep your settings.** A new Kapu version brings new screen markers but keeps your switches and anything you edited.
 
 ## Install

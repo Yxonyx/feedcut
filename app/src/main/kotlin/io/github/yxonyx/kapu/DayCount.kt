@@ -1,6 +1,7 @@
 package io.github.yxonyx.kapu
 
 import android.content.Context
+import androidx.core.content.edit
 import java.time.LocalDate
 
 object DayCount {
@@ -12,7 +13,7 @@ object DayCount {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         val today = LocalDate.now().toString()
         val next = if (prefs.getString(DAY, "") == today) prefs.getInt(N, 0) + 1 else 1
-        prefs.edit().putString(DAY, today).putInt(N, next).apply()
+        prefs.edit { putString(DAY, today).putInt(N, next) }
     }
 
     fun today(context: Context): Int {

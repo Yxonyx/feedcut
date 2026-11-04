@@ -12,8 +12,7 @@ class RulesActivity : AppCompatActivity() {
         setContentView(R.layout.activity_rules)
         fitScreen()
         val editor = findViewById<EditText>(R.id.editor)
-        val file = RuleStore.file(this)
-        editor.setText(if (file.exists()) file.readText() else RuleStore.assetText(this))
+        editor.setText(RuleStore.text(this))
         findViewById<android.view.View>(R.id.save).setOnClickListener {
             try {
                 RuleStore.writeRaw(this, editor.text.toString())
