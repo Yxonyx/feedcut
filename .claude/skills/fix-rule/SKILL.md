@@ -10,11 +10,11 @@ Work through the steps in order. Most "broken rule" reports are a device problem
 ## 1. Rule out the device
 
 ```bash
-adb shell settings get secure enabled_accessibility_services   # must contain local.kapu/local.kapu.GateService
-adb shell pidof local.kapu                                      # empty: Kapu is not running
+adb shell settings get secure enabled_accessibility_services   # must contain io.github.yxonyx.kapu/io.github.yxonyx.kapu.GateService
+adb shell pidof io.github.yxonyx.kapu   # empty: Kapu is not running
 ```
 
-- On Xiaomi/HyperOS check that the system has not frozen Kapu. Get the uid from `adb shell dumpsys package local.kapu | grep userId=`, then `adb shell cat /sys/fs/cgroup/apps/uid_<uid>/pid_<pid>/cgroup.events`. `frozen 1` means the battery setting is wrong, not the rule. Kapu needs *No restrictions* and *Autostart on*.
+- On Xiaomi/HyperOS check that the system has not frozen Kapu. Get the uid from `adb shell dumpsys package io.github.yxonyx.kapu | grep userId=`, then `adb shell cat /sys/fs/cgroup/apps/uid_<uid>/pid_<pid>/cgroup.events`. `frozen 1` means the battery setting is wrong, not the rule. Kapu needs *No restrictions* and *Autostart on*.
 - Close the target app once (`adb shell am force-stop <package>`). A copy that was running when Kapu was installed sends no events.
 
 If any of these was the cause, stop here and tell the user.
@@ -65,7 +65,7 @@ adb shell am force-stop <package>
 Open the blocked screen. Kapu must leave it within about a second. The debug build keeps a counter you can read:
 
 ```bash
-adb shell run-as local.kapu cat shared_prefs/kapu_count.xml
+adb shell run-as io.github.yxonyx.kapu cat shared_prefs/kapu_count.xml
 ```
 
 The number goes up by one for each screen Kapu closed. Then open the allowed screen and check that Kapu leaves it alone for at least ten seconds.

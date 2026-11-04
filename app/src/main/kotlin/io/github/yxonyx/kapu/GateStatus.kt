@@ -1,4 +1,4 @@
-package local.kapu
+package io.github.yxonyx.kapu
 
 import android.content.Context
 import android.provider.Settings

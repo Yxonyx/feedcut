@@ -9,10 +9,10 @@ Kapu is an Android accessibility service that leaves short-video screens (Reels,
 | File | Role |
 | --- | --- |
 | `app/src/main/assets/rules.json` | Default rules. Most fixes are a change here. |
-| `app/src/main/kotlin/local/kapu/Rules.kt` | Pure decision logic: hint matching, tab redirect, rule merge on update. Unit tested. |
-| `app/src/main/kotlin/local/kapu/GateService.kt` | The accessibility service. Reads the window, calls `Rules.kt`, presses Back/Home or taps a tab. |
-| `app/src/main/kotlin/local/kapu/RuleStore.kt` | Loads, validates, saves and merges the rules file on the phone. |
-| `app/src/test/kotlin/local/kapu/RulesTest.kt` | Tests for `Rules.kt`. |
+| `app/src/main/kotlin/io/github/yxonyx/kapu/Rules.kt` | Pure decision logic: hint matching, tab redirect, rule merge on update. Unit tested. |
+| `app/src/main/kotlin/io/github/yxonyx/kapu/GateService.kt` | The accessibility service. Reads the window, calls `Rules.kt`, presses Back/Home or taps a tab. |
+| `app/src/main/kotlin/io/github/yxonyx/kapu/RuleStore.kt` | Loads, validates, saves and merges the rules file on the phone. |
+| `app/src/test/kotlin/io/github/yxonyx/kapu/RulesTest.kt` | Tests for `Rules.kt`. |
 
 ## Hard rules
 

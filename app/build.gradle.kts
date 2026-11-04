@@ -12,11 +12,11 @@ val signing = Properties().apply {
 fun secret(key: String, env: String): String? = signing.getProperty(key) ?: System.getenv(env)
 
 android {
-    namespace = "local.kapu"
+    namespace = "io.github.yxonyx.kapu"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "local.kapu"
+        applicationId = "io.github.yxonyx.kapu"
         minSdk = 26
         targetSdk = 36
         versionCode = 2
