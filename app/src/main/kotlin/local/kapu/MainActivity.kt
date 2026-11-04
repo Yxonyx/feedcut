@@ -1,7 +1,6 @@
 package local.kapu
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
@@ -26,11 +25,20 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
         findViewById<android.view.View>(R.id.open_settings).setOnClickListener {
-            val intent = Intent(
-                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.parse("package:$packageName"),
-            )
-            startActivity(intent)
+            DeviceHelp.openAppSettings(this)
+        }
+        findViewById<android.view.View>(R.id.open_battery).setOnClickListener {
+            DeviceHelp.openBattery(this)
+        }
+        findViewById<android.view.View>(R.id.open_dontkill).setOnClickListener {
+            DeviceHelp.openDontKillMyApp(this)
+        }
+        if (DeviceHelp.isXiaomi) {
+            findViewById<TextView>(R.id.battery_hint).setText(R.string.battery_hint_xiaomi)
+            findViewById<android.view.View>(R.id.open_autostart).apply {
+                visibility = android.view.View.VISIBLE
+                setOnClickListener { DeviceHelp.openAutostart(this@MainActivity) }
+            }
         }
         findViewById<android.view.View>(R.id.edit_json).setOnClickListener {
             startActivity(Intent(this, RulesActivity::class.java))
@@ -65,7 +73,10 @@ class MainActivity : AppCompatActivity() {
         shown.apps.forEachIndexed { index, rule ->
             val row = inflater.inflate(R.layout.item_app, list, false)
             row.findViewById<TextView>(R.id.label).text = rule.label
-            row.findViewById<TextView>(R.id.pkg).text = rule.packageName
+            val installed = DeviceHelp.isInstalled(this, rule.packageName)
+            row.findViewById<TextView>(R.id.pkg).text =
+                if (installed) rule.packageName else "${rule.packageName} · ${getString(R.string.not_installed)}"
+            if (!installed) row.alpha = 0.5f
             val sw = row.findViewById<MaterialSwitch>(R.id.enabled)
             sw.isChecked = rule.enabled
             sw.setOnCheckedChangeListener { _, checked ->

@@ -21,8 +21,8 @@ class RulesActivity : AppCompatActivity() {
                     startService(Intent(this, GateService::class.java))
                 }
                 finish()
-            } catch (e: IllegalArgumentException) {
-                Toast.makeText(this, e.message ?: "Hibás szabály.", Toast.LENGTH_LONG).show()
+            } catch (e: RuleError) {
+                Toast.makeText(this, getString(e.res, *e.args), Toast.LENGTH_LONG).show()
             }
         }
     }

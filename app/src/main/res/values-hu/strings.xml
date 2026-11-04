@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Kapu</string>
+    <string name="service_label">Kapu</string>
+    <string name="service_description">A Kapu csak azokat az appokat nézi, amiket a Kapuban bekapcsolsz. Ha egy beállított képernyőjelet lát, Vissza vagy Home gombot nyom. Üzenetet, jelszót, képet nem olvas, és internetet nem használ.</string>
+    <string name="lead">A szabályok ezen a telefonon vannak. Az app nem kér internetet, nincs fiók, nincs bolt, és a mentés ki van kapcsolva.</string>
+    <string name="open_access">Kisegítő lehetőségek</string>
+    <string name="open_settings">App beállításai</string>
+    <string name="edit_json">Szabályfájl</string>
+    <string name="reset_rules">Gyári szabályok</string>
+    <string name="hints_help">Jelek, vesszővel. Üres: nem nyúl hozzá. Egy csillag (*): az egész app, amint megnyílik.</string>
+    <string name="action_back">Vissza</string>
+    <string name="action_home">Home</string>
+    <string name="save">Mentés</string>
+    <string name="status_on">A Kapu be van kapcsolva.</string>
+    <string name="status_off">A Kapu ki van kapcsolva. A rendszerbeállítóban te kapcsolod be.</string>
+    <string name="today_count">Ma kivett képernyő: %1$d</string>
+    <string name="restricted_hint">Ha a Kisegítő lehetőségekben a Kapu szürke: App beállításai, jobb felül három pont, Korlátozott beállítások engedélyezése. Android 13-tól így van minden nem boltból telepített appnál.</string>
+    <string name="battery_hint">Sok telefon pár perc után leállítja a háttérben futó appokat, és akkor a Kapu nem kap jelet. Az App beállításaiban az akkumulátorhasználat legyen Nincs korlátozás.</string>
+    <string name="battery_hint_xiaomi">Xiaomin, Redmin és POCO-n ez kötelező: Akkumulátorkímélő, Nincs korlátozás, és az automatikus indítás Be. Enélkül a HyperOS pár perc után lefagyasztja a Kaput.</string>
+    <string name="open_battery">Akkumulátor-beállítás</string>
+    <string name="open_autostart">Automatikus indítás</string>
+    <string name="open_dontkill">A te telefonod: dontkillmyapp.com</string>
+    <string name="not_installed">nincs telepítve</string>
+    <string name="err_json">A JSON nem olvasható.</string>
+    <string name="err_no_apps">Hiányzik az apps lista.</string>
+    <string name="err_not_object">Az apps[%1$d] nem objektum.</string>
+    <string name="err_package">Hibás csomagnév az apps[%1$d] helyen.</string>
+    <string name="err_action">Az action csak back vagy home lehet (%1$s).</string>
+</resources>

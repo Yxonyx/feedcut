@@ -29,8 +29,10 @@ data class SeenTab(
     val selected: Boolean,
 )
 
+/** A version a gyári szabályok sorszáma. Ebből tudja a Kapu, hogy frissítés után össze kell fésülni. */
 data class RuleSet(
     val apps: List<AppRule>,
+    val version: Int = 0,
 )
 
 fun activeHints(rule: AppRule): List<String> =
@@ -77,4 +79,44 @@ fun tabRedirect(allow: List<String>, tabs: List<SeenTab>): Int? {
     val selected = tabs.firstOrNull { it.selected } ?: return null
     if (allow.any { it.equals(selected.label, ignoreCase = true) }) return null
     return allowed
+}
+
+/**
+ * Frissítéskor a gyári szabályokat összefésüli a felhasználóéval.
+ * A base az a gyári állapot, amiből a felhasználó fájlja indult. Ahol a
+ * felhasználó eltért tőle, az övé marad, máshol az új gyári érték jön.
+ * Ha nincs base (régi telepítés), a kapcsoló és a lépés marad, a jelek frissülnek.
+ * A bekapcsolás mindig a felhasználóé.
+ */
+fun mergeRules(base: RuleSet?, user: RuleSet, bundled: RuleSet): RuleSet {
+    val userByPkg = user.apps.associateBy { it.packageName }
+    val baseByPkg = base?.apps?.associateBy { it.packageName }.orEmpty()
+    val merged = ArrayList<AppRule>()
+    for (fresh in bundled.apps) {
+        val mine = userByPkg[fresh.packageName]
+        val old = baseByPkg[fresh.packageName]
+        if (mine == null) {
+            // Ha a base-ben megvolt, a felhasználó törölte: nem tesszük vissza.
+            if (old == null) merged.add(fresh)
+            continue
+        }
+        fun <T> pick(field: (AppRule) -> T, keepWithoutBase: Boolean): T = when {
+            old == null -> if (keepWithoutBase) field(mine) else field(fresh)
+            field(mine) != field(old) -> field(mine)
+            else -> field(fresh)
+        }
+        merged.add(
+            AppRule(
+                packageName = fresh.packageName,
+                label = pick(AppRule::label, keepWithoutBase = false),
+                enabled = mine.enabled,
+                action = pick(AppRule::action, keepWithoutBase = true),
+                hints = pick(AppRule::hints, keepWithoutBase = false),
+                allowTabs = pick(AppRule::allowTabs, keepWithoutBase = false),
+            )
+        )
+    }
+    val bundledPkgs = bundled.apps.map { it.packageName }.toSet()
+    merged.addAll(user.apps.filter { it.packageName !in bundledPkgs })
+    return RuleSet(merged, bundled.version)
 }
