@@ -55,6 +55,19 @@ The order matters. Kapu does nothing until all four steps are done.
 
 Add any app you like from the in-app editor (*Rules file*).
 
+## Rule status
+
+Apps rename their screens without notice, so every rule has a date. If a rule here is older than a few months, treat it as unknown.
+
+| Rule | Last checked | On |
+| --- | --- | --- |
+| Instagram Reels | 2026-11-02 | Xiaomi 17, HyperOS, Android 16 |
+| Facebook tab bar | 2026-11-02 | Xiaomi 17, HyperOS, Android 16, Hungarian UI |
+| YouTube Shorts | 2026-11-04 | Android 16 emulator, YouTube 21.42.243 |
+| TikTok | not checked | |
+
+When you confirm or fix a rule, update its row in the same pull request.
+
 ## When a rule stops working
 
 Apps rename their screens. To find the new id, connect the phone with USB debugging, open the screen and run:
@@ -66,12 +79,15 @@ grep -o 'resource-id="[^"]*"' screen.xml | sort -u
 
 If the dump fails while a video plays, pause it first. Then open an issue with the *Broken rule* template, or send a pull request that changes `rules.json` and bumps its `version`.
 
+Using a coding agent? [`AGENTS.md`](AGENTS.md) and the `fix-rule` skill walk it through the same steps.
+
 ## Limits
 
 - **Browsers are not covered.** facebook.com, instagram.com and youtube.com in a browser work as usual.
 - **Facebook tab names depend on your language.** `allowTabs` matches the label before the first comma ("Marketplace, tab 4 of 6"). In most languages it is "Marketplace". If yours differs, add your label to `allowTabs`.
 - **It is an accessibility service, not a lock.** You can switch it off in a few taps. It helps against habit, not against determination.
-- **Tested on:** Xiaomi 17 with HyperOS, November 2026, with Instagram and Facebook. The YouTube and TikTok rules have not been rechecked against the current app versions. Reports from other phones are welcome.
+- **Android 16 Advanced Protection** turns off accessibility services that are not accessibility tools, Kapu included.
+- **Tested on:** see *Rule status*. Only Xiaomi (HyperOS) and stock Android so far. Reports from other phones are welcome.
 
 ## Privacy
 
