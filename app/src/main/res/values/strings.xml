@@ -19,6 +19,7 @@
     <string name="kept">≈ %1$d min kept</string>
     <string name="estimate_note">Estimate: 1 min per cut.</string>
     <string name="week_title">Last 7 days</string>
+    <string name="week_empty">No cuts this week.</string>
     <string name="apps_title">Apps</string>
 
     <string name="setup_title">Setup</string>

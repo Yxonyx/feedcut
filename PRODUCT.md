@@ -28,7 +28,7 @@ The only blocker in its open-source neighbourhood that keeps Facebook useful (Ma
 
 - Native Android, Kotlin, XML views and Material Components. No Compose. minSdk 26, targetSdk 36.
 - No `INTERNET` permission, no analytics, no account. Everything stays on the phone; backup is off.
-- Data on hand: screens closed today (counter), per-app last block time and app version. A daily history and total are not stored yet.
+- Data on hand: screens closed per day for the last 31 days, per-app last block time and the app's version at that time. No all-time total yet.
 - Time saved cannot be measured. Any "time saved" figure is an estimate from closed screens and must show its assumption.
 - English only. The app name is Feedcut; package `io.github.yxonyx.feedcut`.
 

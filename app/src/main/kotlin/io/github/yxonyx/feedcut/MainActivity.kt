@@ -58,7 +58,13 @@ class MainActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.count).text = java.text.NumberFormat.getIntegerInstance().format(cuts)
         findViewById<TextView>(R.id.count_label).text = resources.getQuantityString(R.plurals.count_label, cuts)
         findViewById<TextView>(R.id.kept).text = getString(R.string.kept, minutesKept(cuts))
-        findViewById<WeekView>(R.id.week).show(DayCount.lastDays(this, 7))
+        val week = DayCount.lastDays(this, 7)
+        val empty = week.all { (_, cuts) -> cuts == 0 }
+        findViewById<WeekView>(R.id.week).apply {
+            show(week)
+            visibility = if (empty) View.GONE else View.VISIBLE
+        }
+        findViewById<View>(R.id.week_empty).visibility = if (empty) View.VISIBLE else View.GONE
     }
 
     /** Setup shows as waymarks only until the steps Feedcut can check are done. */
@@ -134,7 +140,7 @@ class MainActivity : AppCompatActivity() {
             button.setText(label)
             button.maxLines = 1
             button.setOnClickListener { run() }
-            val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
             if (i > 0) params.topMargin = (4 * resources.displayMetrics.density).toInt()
             bar.addView(button, params)
         }
@@ -146,17 +152,23 @@ class MainActivity : AppCompatActivity() {
         val list = findViewById<LinearLayout>(R.id.app_list)
         list.removeAllViews()
         val inflater = LayoutInflater.from(this)
-        shown.apps.forEachIndexed { index, rule ->
+        // Installed apps first; the index still points into the rules file.
+        val rows = shown.apps.withIndex()
+            .map { (index, rule) -> Triple(index, rule, BlockLog.health(this, rule.packageName)) }
+            .sortedBy { (_, _, health) -> health == RuleHealth.NOT_INSTALLED }
+        rows.forEach { (index, rule, health) ->
             val row = inflater.inflate(R.layout.item_app_row, list, false)
-            row.findViewById<TextView>(R.id.label).text = rule.label
-            val health = BlockLog.health(this, rule.packageName)
+            val label = row.findViewById<TextView>(R.id.label)
+            label.text = rule.label
             val detail = row.findViewById<TextView>(R.id.detail)
             detail.text = detailLine(rule, health)
             if (rule.enabled && health == RuleHealth.APP_UPDATED) {
                 detail.setTextColor(ContextCompat.getColor(this, R.color.c_warn))
             }
-            if (health == RuleHealth.NOT_INSTALLED) row.alpha = 0.55f
+            val installed = health != RuleHealth.NOT_INSTALLED
+            if (!installed) label.setTextColor(ContextCompat.getColor(this, R.color.c_muted))
             val sw = row.findViewById<MaterialSwitch>(R.id.enabled)
+            sw.isEnabled = installed
             sw.isChecked = rule.enabled
             sw.contentDescription = rule.label
             sw.setOnCheckedChangeListener { _, checked ->

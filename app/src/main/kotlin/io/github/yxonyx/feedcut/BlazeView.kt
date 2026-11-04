@@ -2,7 +2,6 @@ package io.github.yxonyx.feedcut
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
@@ -12,7 +11,7 @@ import androidx.core.graphics.withTranslation
 
 /**
  * The status, painted as a trail blaze: white, red, white.
- * Whole when Feedcut runs, only an outline when it is off, and broken in trail yellow
+ * Whole when Feedcut runs, unpainted bands when it is off, and broken in trail yellow
  * when it is switched on but Android stopped it. The status line next to it says the
  * same in words, so the state never depends on colour alone.
  */
@@ -35,9 +34,6 @@ class BlazeView @JvmOverloads constructor(
         strokeWidth = 1.5f * density
         color = ContextCompat.getColor(context, R.color.c_muted)
     }
-    private val dashed = Paint(edge).apply {
-        pathEffect = DashPathEffect(floatArrayOf(8 * density, 6 * density), 0f)
-    }
     private val white = ContextCompat.getColor(context, R.color.blaze_white)
     private val red = ContextCompat.getColor(context, R.color.blaze_red)
     private val yellow = ContextCompat.getColor(context, R.color.trail_yellow)
@@ -49,7 +45,12 @@ class BlazeView @JvmOverloads constructor(
         val inset = edge.strokeWidth / 2
         box.set(inset, inset, w - inset, h - inset)
         when (state) {
-            GateState.OFF -> canvas.drawRoundRect(box, radius, radius, dashed)
+            GateState.OFF -> {
+                // The same three bands, unpainted: the shape stays, the paint is gone.
+                canvas.drawRoundRect(box, radius, radius, edge)
+                canvas.drawLine(box.left, h * 0.3f, box.right, h * 0.3f, edge)
+                canvas.drawLine(box.left, h * 0.7f, box.right, h * 0.7f, edge)
+            }
             GateState.ON -> {
                 paintBands(canvas, red, 0f, w, 0f)
                 canvas.drawRoundRect(box, radius, radius, edge)
