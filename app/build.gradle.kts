@@ -1,6 +1,15 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
 }
+
+// A release-kulcs sosem kerül a repóba. Helyben keystore.properties, CI-ban környezeti változók adják.
+val signing = Properties().apply {
+    val local = rootProject.file("keystore.properties")
+    if (local.exists()) local.inputStream().use { load(it) }
+}
+fun secret(key: String, env: String): String? = signing.getProperty(key) ?: System.getenv(env)
 
 android {
     namespace = "local.kapu"
@@ -10,14 +19,33 @@ android {
         applicationId = "local.kapu"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1.0"
+    }
+
+    signingConfigs {
+        val store = secret("storeFile", "KAPU_STORE_FILE")
+        if (store != null) {
+            create("release") {
+                storeFile = rootProject.file(store)
+                storePassword = secret("storePassword", "KAPU_STORE_PASSWORD")
+                keyAlias = secret("keyAlias", "KAPU_KEY_ALIAS")
+                keyPassword = secret("keyPassword", "KAPU_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.findByName("release")
         }
+    }
+
+    // Reprodukálható build (IzzyOnDroid, F-Droid): a Play-metaadat-blokk kimarad.
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
     }
 
     compileOptions {

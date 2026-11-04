@@ -1,0 +1,43 @@
+name: Broken rule
+description: An app shows a screen Kapu should close, or Kapu closes a screen it should not.
+labels: [rule]
+body:
+  - type: input
+    id: app
+    attributes:
+      label: App and app version
+      description: Settings, Apps, the app, version at the bottom.
+      placeholder: Instagram 412.0.0.35.87
+    validations:
+      required: true
+  - type: input
+    id: phone
+    attributes:
+      label: Phone, Android version, Kapu version
+      placeholder: Xiaomi 17, HyperOS 3 (Android 16), Kapu 1.1.0
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens
+      description: Which screen, and what you expected.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checked
+      options:
+        - label: Kapu is on in Accessibility settings
+          required: true
+        - label: Battery usage for Kapu is Unrestricted (Xiaomi also Autostart on)
+          required: true
+        - label: I closed and reopened the app after installing or updating Kapu
+          required: true
+  - type: textarea
+    id: ids
+    attributes:
+      label: View ids on that screen (optional, helps the most)
+      description: "adb shell uiautomator dump /sdcard/screen.xml && adb pull /sdcard/screen.xml, then grep -o 'resource-id=\"[^\"]*\"' screen.xml | sort -u. Remove anything personal."
+      render: text

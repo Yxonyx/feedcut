@@ -1,35 +1,97 @@
 # Kapu
 
-Saját Android app. Instagram Reels, YouTube Shorts és TikTok feed ellen, csak ezen a telefonon.
+An Android app that closes Instagram Reels, YouTube Shorts and TikTok the moment they open, and keeps Facebook to Marketplace and Groups. It has no internet permission.
 
-A Playről telepített Basta ettől független. A kettő ne fusson egyszerre: a Bastánál kapcsold ki a kisegítő szolgáltatást.
+*Kapu* is Hungarian for "gate".
 
-## Mi van a kezedben
+| App | What Kapu does |
+| --- | --- |
+| Instagram | Leaves Reels. Feed, Stories, DMs and search work. |
+| YouTube | Leaves Shorts. Normal videos, search and subscriptions work. |
+| TikTok | Goes to the home screen when the video feed shows. |
+| Facebook | Switches Home, Reels, Video and every other tab to Marketplace. The ☰ menu and Groups work. |
 
-- Nincs `INTERNET` jogosultság. Távoli szabály, analitika, fiók és bolt nincs.
-- A szabályfájl a telefon belső tárhelyén van: `files/rules.json`. Az appban a Szabályfájl gomb ezt mutatja.
-- A Kapu csak a bekapcsolt csomagok eseményét kéri a rendszertől. A többi app képernyőjét nem olvassa.
-- Szöveget és képet nem néz. Csak a látható nézet `view-id` mezőjét hasonlítja a jeleidhez. Kivétel az `allowTabs`: ott az alsó fülsor feliratát olvassa (például „Marketplace, 4. lap”), más nézetét nem.
-- Üres jel: az appot békén hagyja. `*`: az egész app, amint megnyílik.
-- `allowTabs`: a fülsoron csak ezek a fülek maradhatnak kijelölve, a többiről átkattint az elsőre. A Facebookban `["Marketplace"]`: a Hírfolyam, a Reels és a többi fül helyett a Marketplace nyílik meg. A ☰ menü és a Csoportok szabad, mert ott nincs alsó fülsor. A facebook.com böngészőben ettől még elérhető.
-- `back` a rendszer Vissza gombja. `home` a kezdőképernyőre visz.
-- A felhőmentés ki van kapcsolva. Törléskor a szabályok és a számláló is mennek.
+## How it differs from other blockers
 
-A gyári jelek nyilvános felületnevek (`clips_viewer`, `reel_watch_player`, `video_player_progress`). Ha egy app frissítése után nem fog, a jelet itt cseréled, nem egy idegen szerver.
+- **Facebook without the feed.** Most blockers either block Facebook or hide Reels. Kapu keeps the parts people need, Marketplace and Groups, and takes away the feed.
+- **No internet permission.** Check `AndroidManifest.xml`: there is no `INTERNET` permission, so Kapu cannot send anything anywhere. No account, no analytics, no remote rules.
+- **The rules are a file you can read.** Every blocked screen is a line in [`rules.json`](app/src/main/assets/rules.json). When an app renames a screen, the fix is a one-line pull request, and the in-app editor lets you fix it on your phone the same day.
+- **App updates keep your settings.** A new Kapu version brings new screen markers but keeps your switches and anything you edited.
 
-## Fordítás
+## Install
 
-Android Studio: File, Open, ez a mappa, majd Run.
+1. Download the APK from [Releases](../../releases). You can also add this repository to [Obtainium](https://github.com/ImranR98/Obtainium) to get updates.
+2. Open it and allow the install.
 
-Parancssorból:
+Android 8.0 or newer (API 26).
 
-```bash
-export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
-./gradlew :app:assembleDebug :app:testDebugUnitTest
+## Setup
+
+The order matters. Kapu does nothing until all four steps are done.
+
+1. **Turn on the accessibility service.** Open Kapu and tap *Accessibility settings*, then switch Kapu on.
+2. **If the switch is greyed out** (Android 13 and later, for apps installed outside a store): go back to Kapu, tap *App settings*, open the three-dot menu at the top right and choose *Allow restricted settings*. On some phones this menu item only appears after you have tried step 1 once. Then repeat step 1.
+3. **Stop the phone from killing it.** In *App settings*, set battery usage to *Unrestricted*.
+   - Xiaomi, Redmi, POCO (HyperOS, MIUI): *Battery saver: No restrictions* and *Autostart: on*. This is required. Without it HyperOS freezes Kapu after a few minutes and blocking quietly stops. Kapu has buttons for both screens.
+   - Samsung, OnePlus, Oppo, Realme, Vivo, Huawei, Honor: see [dontkillmyapp.com](https://dontkillmyapp.com) for your phone. Kapu opens your phone's page there.
+4. **Facebook only:** Marketplace has to be in your Facebook tab bar. If it isn't, add it in Facebook under Settings, Tab bar. Close Facebook once after installing or updating Kapu, because a Facebook that was already running does not send events to a newly installed service.
+
+## The rules file
+
+```json
+{
+  "package": "com.instagram.android",
+  "label": "Instagram",
+  "enabled": true,
+  "action": "back",
+  "hints": ["clips_viewer", "clips_swipe_refresh"]
+}
 ```
 
-A telepíthető csomag: `app/build/outputs/apk/debug/app-debug.apk`.
+- `hints`: view ids on the screen you want to leave. Kapu compares only the visible views' `view-id` with these. It does not read text or images.
+- `*` as a hint: leave the whole app as soon as it opens.
+- `action`: `back` presses Back, `home` goes to the home screen.
+- `allowTabs`: for apps with a bottom tab bar. Only these tabs may stay selected, and Kapu taps the first one when any other tab is selected. Facebook uses `["Marketplace"]`. This is the only place Kapu reads labels: the bottom tab bar's tab names, nothing else.
 
-Android 13-tól a telepített appnál előbb engedélyezd a korlátozott beállításokat (App infó, három pont). Utána a Kisegítő lehetőségekben kapcsold be a Kaput. Xiaomin az App infóban az Akkumulátorkímélő legyen Nincs korlátozás, és az automatikus indítás Be. Enélkül a HyperOS pár perc után lefagyasztja a Kaput (GreezeManager), és a Kapu nem kap eseményt.
+Add any app you like from the in-app editor (*Rules file*).
 
-A Kapu frissítése után a már futó Facebookot egyszer zárd be, különben nem küld neki eseményt.
+## When a rule stops working
+
+Apps rename their screens. To find the new id, connect the phone with USB debugging, open the screen and run:
+
+```bash
+adb shell uiautomator dump /sdcard/screen.xml && adb pull /sdcard/screen.xml
+grep -o 'resource-id="[^"]*"' screen.xml | sort -u
+```
+
+If the dump fails while a video plays, pause it first. Then open an issue with the *Broken rule* template, or send a pull request that changes `rules.json` and bumps its `version`.
+
+## Limits
+
+- **Browsers are not covered.** facebook.com, instagram.com and youtube.com in a browser work as usual.
+- **Facebook tab names depend on your language.** `allowTabs` matches the label before the first comma ("Marketplace, tab 4 of 6"). In most languages it is "Marketplace". If yours differs, add your label to `allowTabs`.
+- **It is an accessibility service, not a lock.** You can switch it off in a few taps. It helps against habit, not against determination.
+- **Tested on:** Xiaomi 17 with HyperOS, November 2026, with Instagram and Facebook. The YouTube and TikTok rules have not been rechecked against the current app versions. Reports from other phones are welcome.
+
+## Privacy
+
+Kapu asks the system for events only from the apps you switch on. It reads view ids, and for `allowTabs` the bottom tab bar's labels. It stores your rules and a daily counter on the phone. Backup is off, so uninstalling removes everything. There is no network code.
+
+## Build
+
+```bash
+./gradlew :app:testDebugUnitTest :app:assembleDebug
+```
+
+JDK 17 or newer. The APK is at `app/build/outputs/apk/debug/app-debug.apk`.
+
+For a signed release, create `keystore.properties` in the project root (it is git-ignored):
+
+```properties
+storeFile=release.jks
+storePassword=...
+keyAlias=kapu
+keyPassword=...
+```
+
+Pushing a `v*` tag builds a signed APK on GitHub Actions and attaches it to a release. It needs the secrets `KAPU_STORE_BASE64`, `KAPU_STORE_PASSWORD`, `KAPU_KEY_ALIAS` and `KAPU_KEY_PASSWORD`.

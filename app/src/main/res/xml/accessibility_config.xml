@@ -6,6 +6,6 @@
     android:canPerformGestures="false"
     android:canRetrieveWindowContent="true"
     android:description="@string/service_description"
-    android:isAccessibilityTool="true"
+    android:isAccessibilityTool="false"
     android:notificationTimeout="100"
     android:packageNames="local.kapu" />

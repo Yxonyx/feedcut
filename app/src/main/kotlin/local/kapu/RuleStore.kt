@@ -1,21 +1,39 @@
 package local.kapu
 
 import android.content.Context
+import androidx.annotation.StringRes
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 
+/** Hibás szabályfájl. Az üzenet erőforrásból jön, hogy minden nyelven olvasható legyen. */
+class RuleError(@StringRes val res: Int, vararg val args: Any) : IllegalArgumentException()
+
 object RuleStore {
     fun file(context: Context): File = File(context.filesDir, "rules.json")
+
+    /** A gyári szabályok másolata, amiből a felhasználó fájlja indult. Az összefésüléshez kell. */
+    private fun baseFile(context: Context): File = File(context.filesDir, "rules.base.json")
 
     fun read(context: Context): RuleSet {
         val target = file(context)
         if (!target.exists()) {
-            context.assets.open("rules.json").use { input ->
-                target.writeBytes(input.readBytes())
-            }
+            reset(context)
+            return parse(target.readText())
         }
-        return parse(target.readText())
+        val user = parse(target.readText())
+        val bundled = parse(assetText(context))
+        if (bundled.version <= user.version) return user
+        // Az app frissült, és újabb gyári jeleket hozott.
+        val base = try {
+            baseFile(context).takeIf { it.exists() }?.let { parse(it.readText()) }
+        } catch (_: IllegalArgumentException) {
+            null
+        }
+        val merged = mergeRules(base, user, bundled)
+        target.writeText(toJson(merged))
+        baseFile(context).writeText(assetText(context))
+        return merged
     }
 
     fun readQuiet(context: Context): RuleSet = try {
@@ -34,9 +52,9 @@ object RuleStore {
     }
 
     fun reset(context: Context) {
-        context.assets.open("rules.json").use { input ->
-            file(context).writeBytes(input.readBytes())
-        }
+        val raw = assetText(context)
+        file(context).writeText(raw)
+        baseFile(context).writeText(raw)
     }
 
     fun assetText(context: Context): String =
@@ -46,33 +64,19 @@ object RuleStore {
         val root = try {
             JSONObject(raw)
         } catch (e: Exception) {
-            throw IllegalArgumentException("A JSON nem olvasható.")
+            throw RuleError(R.string.err_json)
         }
-        val appsJson = root.optJSONArray("apps")
-            ?: throw IllegalArgumentException("Hiányzik az apps lista.")
+        val appsJson = root.optJSONArray("apps") ?: throw RuleError(R.string.err_no_apps)
         val apps = ArrayList<AppRule>(appsJson.length())
         for (i in 0 until appsJson.length()) {
-            val item = appsJson.optJSONObject(i)
-                ?: throw IllegalArgumentException("Az apps[$i] nem objektum.")
+            val item = appsJson.optJSONObject(i) ?: throw RuleError(R.string.err_not_object, i)
             val packageName = item.optString("package").trim()
             if (packageName.isEmpty() || packageName.contains(' ')) {
-                throw IllegalArgumentException("Hibás csomagnév az apps[$i] helyen.")
+                throw RuleError(R.string.err_package, i)
             }
             val action = item.optString("action", "back")
             if (action != "back" && action != "home") {
-                throw IllegalArgumentException("Az action csak back vagy home lehet ($packageName).")
-            }
-            val hintsJson = item.optJSONArray("hints") ?: JSONArray()
-            val hints = ArrayList<String>(hintsJson.length())
-            for (h in 0 until hintsJson.length()) {
-                val hint = hintsJson.optString(h).trim()
-                if (hint.isNotEmpty()) hints.add(hint)
-            }
-            val allowJson = item.optJSONArray("allowTabs") ?: JSONArray()
-            val allowTabs = ArrayList<String>(allowJson.length())
-            for (a in 0 until allowJson.length()) {
-                val tab = allowJson.optString(a).trim()
-                if (tab.isNotEmpty()) allowTabs.add(tab)
+                throw RuleError(R.string.err_action, packageName)
             }
             apps.add(
                 AppRule(
@@ -80,12 +84,22 @@ object RuleStore {
                     label = item.optString("label").ifBlank { packageName },
                     enabled = item.optBoolean("enabled", false),
                     action = action,
-                    hints = hints,
-                    allowTabs = allowTabs,
+                    hints = strings(item.optJSONArray("hints")),
+                    allowTabs = strings(item.optJSONArray("allowTabs")),
                 )
             )
         }
-        return RuleSet(apps)
+        return RuleSet(apps, root.optInt("version", 0))
+    }
+
+    private fun strings(array: JSONArray?): List<String> {
+        if (array == null) return emptyList()
+        val out = ArrayList<String>(array.length())
+        for (i in 0 until array.length()) {
+            val value = array.optString(i).trim()
+            if (value.isNotEmpty()) out.add(value)
+        }
+        return out
     }
 
     fun toJson(rules: RuleSet): String {
@@ -104,6 +118,6 @@ object RuleStore {
             }
             apps.put(item)
         }
-        return JSONObject().put("apps", apps).toString(2) + "\n"
+        return JSONObject().put("version", rules.version).put("apps", apps).toString(2) + "\n"
     }
 }
