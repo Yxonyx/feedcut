@@ -111,3 +111,7 @@ keyPassword=...
 ```
 
 Pushing a `v*` tag builds a signed APK on GitHub Actions and attaches it to a release. It needs the secrets `KAPU_STORE_BASE64`, `KAPU_STORE_PASSWORD`, `KAPU_KEY_ALIAS` and `KAPU_KEY_PASSWORD` in a protected `release` environment.
+
+## License
+
+[GPL-3.0](LICENSE). You may use, change and share Kapu, and versions you share must stay open under the same license.

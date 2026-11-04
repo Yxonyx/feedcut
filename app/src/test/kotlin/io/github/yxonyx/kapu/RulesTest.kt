@@ -1,4 +1,4 @@
-package local.kapu
+package io.github.yxonyx.kapu
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull

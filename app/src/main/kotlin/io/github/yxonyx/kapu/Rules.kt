@@ -1,4 +1,4 @@
-package local.kapu
+package io.github.yxonyx.kapu
 
 /**
  * Döntés a képernyőfa nélkül. A szolgáltatás csak látható view-id-ket ad át,

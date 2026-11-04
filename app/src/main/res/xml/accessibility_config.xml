@@ -8,4 +8,4 @@
     android:description="@string/service_description"
     android:isAccessibilityTool="false"
     android:notificationTimeout="100"
-    android:packageNames="local.kapu" />
+    android:packageNames="io.github.yxonyx.kapu" />
