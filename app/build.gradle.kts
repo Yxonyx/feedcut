@@ -4,7 +4,7 @@ plugins {
     id("com.android.application")
 }
 
-// A release-kulcs sosem kerül a repóba. Helyben keystore.properties, CI-ban környezeti változók adják.
+// The release key never enters the repo: keystore.properties locally, environment variables in CI.
 val signing = Properties().apply {
     val local = rootProject.file("keystore.properties")
     if (local.exists()) local.inputStream().use { load(it) }
@@ -42,7 +42,7 @@ android {
         }
     }
 
-    // Reprodukálható build (IzzyOnDroid, F-Droid): a Play-metaadat-blokk kimarad.
+    // Reproducible builds (IzzyOnDroid, F-Droid): leave out the Play dependency metadata block.
     dependenciesInfo {
         includeInApk = false
         includeInBundle = false
@@ -58,6 +58,6 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.8.0")
     implementation("com.google.android.material:material:1.14.0")
     testImplementation("junit:junit:4.13.2")
-    // Az android.jar org.json-ja a JVM-tesztekben csak csonk. Ez a valódi, a RuleStore tesztjeihez.
+    // android.jar's org.json is only a stub in JVM tests. The real one, for the RuleStore tests.
     testImplementation("org.json:json:20260814")
 }

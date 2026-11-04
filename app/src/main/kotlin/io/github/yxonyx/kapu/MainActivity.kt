@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     private var shown: RuleSet = RuleSet(emptyList())
     private var writing = false
 
-    // A jelek mezője gépelés közben nem ír minden betűnél: fél másodperc csend után ment.
+    // The hints field does not save on every keystroke, only after half a second of quiet.
     private val saver = Handler(Looper.getMainLooper())
     private val pendingHints = LinkedHashMap<Int, Runnable>()
 
@@ -69,7 +69,13 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         val status = findViewById<TextView>(R.id.status)
-        status.setText(if (GateStatus.isEnabled(this)) R.string.status_on else R.string.status_off)
+        status.setText(
+            when {
+                !GateStatus.isEnabled(this) -> R.string.status_off
+                !GateStatus.isRunning(this) -> R.string.status_stuck
+                else -> R.string.status_on
+            },
+        )
         findViewById<TextView>(R.id.today).text =
             getString(R.string.today_count, DayCount.today(this))
         render()

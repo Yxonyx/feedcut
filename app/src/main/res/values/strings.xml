@@ -32,4 +32,5 @@
     <string name="health_never">Has not closed a screen yet.</string>
     <string name="health_last">Last closed a screen %1$s.</string>
     <string name="health_updated">The app was updated since Kapu last closed a screen. If it gets through now, the rule may be broken.</string>
+    <string name="status_stuck">Kapu is switched on, but Android is not running it. Switch it off and on again in Accessibility settings.</string>
 </resources>

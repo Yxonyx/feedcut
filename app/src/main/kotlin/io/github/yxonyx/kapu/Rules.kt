@@ -1,8 +1,8 @@
 package io.github.yxonyx.kapu
 
 /**
- * Döntés a képernyőfa nélkül. A szolgáltatás csak látható view-id-ket ad át,
- * szöveget nem.
+ * Decisions without the view tree. The service passes only visible view ids,
+ * never text.
  */
 data class SeenNode(
     val viewId: String?,
@@ -23,13 +23,13 @@ data class AppRule(
     val allowTabs: List<String> = emptyList(),
 )
 
-/** Egy fül az app alsó sávjából: csak a felirat első tagja ("Marketplace") és a kijelölés. */
+/** A tab from the bottom bar: only the first part of its label ("Marketplace") and whether it is selected. */
 data class SeenTab(
     val label: String,
     val selected: Boolean,
 )
 
-/** A version a gyári szabályok sorszáma. Ebből tudja a Kapu, hogy frissítés után össze kell fésülni. */
+/** version numbers the default rules. It tells Kapu to merge after an app update. */
 data class RuleSet(
     val apps: List<AppRule>,
     val version: Int = 0,
@@ -38,6 +38,13 @@ data class RuleSet(
 fun activeHints(rule: AppRule): List<String> =
     if (!rule.enabled) emptyList() else rule.hints.map { it.trim() }.filter { it.isNotEmpty() }
 
+/**
+ * If Kapu had to leave the same app moments ago, Back was not enough
+ * (for example the user tapped straight back in), so go Home.
+ */
+fun escalate(action: GateAction, sameAppJustNow: Boolean): GateAction =
+    if (sameAppJustNow) GateAction.HOME else action
+
 fun actionOf(rule: AppRule): GateAction =
     if (rule.action == "home") GateAction.HOME else GateAction.BACK
 
@@ -45,8 +52,8 @@ fun idMatches(hints: List<String>, viewId: String?): Boolean =
     viewId != null && hints.any { hint -> hint != "*" && viewId.contains(hint, ignoreCase = true) }
 
 /**
- * Teljes view-id-k a gyors kereséshez. Ezt a cél app a saját folyamatában
- * keresi ki, egy hívással, nem nézetenként.
+ * Full view ids for the fast lookup. The target app resolves them in its own
+ * process in one call, instead of one call per view.
  */
 fun exactIds(packageName: String, hints: List<String>): List<String> =
     hints.filter { it != "*" }.map { if (':' in it) it else "$packageName:id/$it" }
@@ -69,8 +76,8 @@ fun tabLabel(contentDescription: CharSequence?): String =
     contentDescription?.toString()?.substringBefore(',')?.trim().orEmpty()
 
 /**
- * Melyik fülre kell átkattintani. A fülsort az ismeri fel, hogy van benne
- * engedélyezett fül. Ha nincs ilyen (menü, csoport, hirdetés), békén hagyja.
+ * Which tab to tap. A tab bar is recognised by containing an allowed tab.
+ * Without one (menu, group, ad) the screen is left alone.
  */
 fun tabRedirect(allow: List<String>, tabs: List<SeenTab>): Int? {
     if (allow.isEmpty()) return null
@@ -82,11 +89,11 @@ fun tabRedirect(allow: List<String>, tabs: List<SeenTab>): Int? {
 }
 
 /**
- * Frissítéskor a gyári szabályokat összefésüli a felhasználóéval.
- * A base az a gyári állapot, amiből a felhasználó fájlja indult. Ahol a
- * felhasználó eltért tőle, az övé marad, máshol az új gyári érték jön.
- * Ha nincs base (régi telepítés), a kapcsoló és a lépés marad, a jelek frissülnek.
- * A bekapcsolás mindig a felhasználóé.
+ * On update, merges the new default rules into the user's rules.
+ * base is the default state the user's file started from. Where the user changed
+ * a field, the user's value stays; elsewhere the new default wins.
+ * Without a base (old installs) the switch and the action stay and the hints update.
+ * enabled always stays the user's.
  */
 fun mergeRules(base: RuleSet?, user: RuleSet, bundled: RuleSet): RuleSet {
     val userByPkg = user.apps.associateBy { it.packageName }
@@ -96,7 +103,7 @@ fun mergeRules(base: RuleSet?, user: RuleSet, bundled: RuleSet): RuleSet {
         val mine = userByPkg[fresh.packageName]
         val old = baseByPkg[fresh.packageName]
         if (mine == null) {
-            // Ha a base-ben megvolt, a felhasználó törölte: nem tesszük vissza.
+            // It was in base, so the user deleted it. Do not bring it back.
             if (old == null) merged.add(fresh)
             continue
         }
@@ -129,8 +136,8 @@ enum class RuleHealth {
 }
 
 /**
- * Offline jelzés arra, hogy egy szabály talán eltört. Ha az app frissült a legutóbbi
- * blokkolás óta, és azóta nem volt blokkolás, a jel lehet, hogy már nem létezik.
+ * Offline hint that a rule may be broken. If the app updated since the last block
+ * and nothing was blocked since, the marker may no longer exist.
  */
 fun ruleHealth(installedVersion: Long?, lastBlockAt: Long?, versionAtBlock: Long?): RuleHealth = when {
     installedVersion == null -> RuleHealth.NOT_INSTALLED

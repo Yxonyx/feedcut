@@ -143,4 +143,11 @@ class RulesTest {
         assertEquals(RuleHealth.APP_UPDATED, ruleHealth(3L, 5L, 2L))
         assertEquals(RuleHealth.OK, ruleHealth(3L, 5L, null))
     }
+
+    @Test
+    fun repeatedLeaveGoesHome() {
+        assertEquals(GateAction.BACK, escalate(GateAction.BACK, sameAppJustNow = false))
+        assertEquals(GateAction.HOME, escalate(GateAction.BACK, sameAppJustNow = true))
+        assertEquals(GateAction.HOME, escalate(GateAction.HOME, sameAppJustNow = false))
+    }
 }
