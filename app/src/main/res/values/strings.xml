@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Kapu</string>
+    <string name="service_label">Kapu</string>
+    <string name="service_description">A Kapu csak azokat az appokat nézi, amiket a Kapuban bekapcsolsz. Ha egy beállított képernyőjelet lát, Vissza vagy Home gombot nyom. Üzenetet, jelszót, képet nem olvas, és internetet nem használ.</string>
+    <string name="lead">A szabályok ezen a telefonon vannak. Az app nem kér internetet, nincs fiók, nincs bolt, és a mentés ki van kapcsolva.</string>
+    <string name="open_access">Kisegítő lehetőségek</string>
+    <string name="open_settings">App beállításai</string>
+    <string name="edit_json">Szabályfájl</string>
+    <string name="reset_rules">Gyári szabályok</string>
+    <string name="hints_help">Jelek, vesszővel. Üres: nem nyúl hozzá. Egy csillag (*): az egész app, amint megnyílik.</string>
+    <string name="action_back">Vissza</string>
+    <string name="action_home">Home</string>
+    <string name="save">Mentés</string>
+    <string name="status_on">A Kapu be van kapcsolva.</string>
+    <string name="status_off">A Kapu ki van kapcsolva. A rendszerbeállítóban te kapcsolod be.</string>
+    <string name="today_count">Ma kivett képernyő: %1$d</string>
+    <string name="restricted_hint">Android 13-tól egy telepített appnál előbb: App infó, három pont, Korlátozott beállítások engedélyezése. Xiaomin az automatikus indítást is kapcsold be, különben a rendszer leállítja.</string>
+</resources>
