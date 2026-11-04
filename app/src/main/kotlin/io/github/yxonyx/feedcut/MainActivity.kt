@@ -168,7 +168,8 @@ class MainActivity : AppCompatActivity() {
             val installed = health != RuleHealth.NOT_INSTALLED
             if (!installed) label.setTextColor(ContextCompat.getColor(this, R.color.c_muted))
             val sw = row.findViewById<MaterialSwitch>(R.id.enabled)
-            sw.isEnabled = installed
+            // Nothing to switch for an app that is not there.
+            sw.visibility = if (installed) View.VISIBLE else View.GONE
             sw.isChecked = rule.enabled
             sw.contentDescription = rule.label
             sw.setOnCheckedChangeListener { _, checked ->

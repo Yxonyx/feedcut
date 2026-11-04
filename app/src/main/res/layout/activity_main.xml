@@ -76,13 +76,19 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="28dp"
+            android:baselineAligned="false"
+            android:gravity="bottom"
             android:orientation="horizontal">
 
+            <!-- Barlow's ascent and descent leave empty bands around the numerals. The negative
+                 margins trim them, so the digits' foot lands on the bottom of the label column. -->
             <TextView
                 android:id="@+id/count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="-30dp"
+                android:layout_marginBottom="-22dp"
                 android:textAppearance="@style/TextAppearance.Feedcut.Count"
                 tools:text="42" />
 
@@ -91,7 +97,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_weight="1"
-                android:baselineAlignedChildIndex="2"
                 android:orientation="vertical">
 
                 <TextView
@@ -121,7 +126,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="36dp"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp"
             android:accessibilityHeading="true"
             android:text="@string/week_title"
