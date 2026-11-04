@@ -1,0 +1,47 @@
+{
+  "apps": [
+    {
+      "package": "com.instagram.android",
+      "label": "Instagram",
+      "enabled": true,
+      "action": "back",
+      "hints": ["clips_viewer", "clips_swipe_refresh"]
+    },
+    {
+      "package": "com.google.android.youtube",
+      "label": "YouTube",
+      "enabled": true,
+      "action": "back",
+      "hints": ["reel_watch_player", "reel_player_page_container", "reel_recycler"]
+    },
+    {
+      "package": "app.revanced.android.youtube",
+      "label": "YouTube ReVanced",
+      "enabled": false,
+      "action": "back",
+      "hints": ["reel_watch_player", "reel_player_page_container"]
+    },
+    {
+      "package": "com.zhiliaoapp.musically",
+      "label": "TikTok",
+      "enabled": true,
+      "action": "home",
+      "hints": ["video_player_progress"]
+    },
+    {
+      "package": "com.ss.android.ugc.trill",
+      "label": "TikTok (trill)",
+      "enabled": false,
+      "action": "home",
+      "hints": ["video_player_progress"]
+    },
+    {
+      "package": "com.facebook.katana",
+      "label": "Facebook",
+      "enabled": true,
+      "action": "back",
+      "hints": [],
+      "allowTabs": ["Marketplace"]
+    }
+  ]
+}
