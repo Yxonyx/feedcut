@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "kapu"
+rootProject.name = "feedcut"
 include(":app")

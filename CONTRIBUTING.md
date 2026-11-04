@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping. Kapu is maintained by one person in their free time, so small, focused changes get merged fastest.
+Thanks for helping. Feedcut is maintained by one person in their free time, so small, focused changes get merged fastest.
 
 ## What is welcome
 
@@ -16,9 +16,9 @@ Thanks for helping. Kapu is maintained by one person in their free time, so smal
 
 ## Will not be merged
 
-- Network access of any kind: analytics, crash reporting, remote rules, update checks. Kapu has no `INTERNET` permission, and that stays.
+- Network access of any kind: analytics, crash reporting, remote rules, update checks. Feedcut has no `INTERNET` permission, and that stays.
 - Reading screen text beyond the tab bar labels that `allowTabs` already uses.
-- Making Kapu hard to switch off. It is a habit aid, not parental control.
+- Making Feedcut hard to switch off. It is a habit aid, not parental control.
 
 ## Pull requests
 

@@ -1,5 +1,5 @@
 name: Broken rule
-description: An app shows a screen Kapu should close, or Kapu closes a screen it should not.
+description: An app shows a screen Feedcut should close, or Feedcut closes a screen it should not.
 labels: [rule]
 body:
   - type: input
@@ -13,8 +13,8 @@ body:
   - type: input
     id: phone
     attributes:
-      label: Phone, Android version, Kapu version
-      placeholder: Xiaomi 17, HyperOS 3 (Android 16), Kapu 1.1.0
+      label: Phone, Android version, Feedcut version
+      placeholder: Xiaomi 17, HyperOS 3 (Android 16), Feedcut 1.1.0
     validations:
       required: true
   - type: textarea
@@ -29,11 +29,11 @@ body:
     attributes:
       label: Checked
       options:
-        - label: Kapu is on in Accessibility settings
+        - label: Feedcut is on in Accessibility settings
           required: true
-        - label: Battery usage for Kapu is Unrestricted (Xiaomi also Autostart on)
+        - label: Battery usage for Feedcut is Unrestricted (Xiaomi also Autostart on)
           required: true
-        - label: I closed and reopened the app after installing or updating Kapu
+        - label: I closed and reopened the app after installing or updating Feedcut
           required: true
   - type: textarea
     id: ids

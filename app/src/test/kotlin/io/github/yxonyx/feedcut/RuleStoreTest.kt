@@ -1,4 +1,4 @@
-package io.github.yxonyx.kapu
+package io.github.yxonyx.feedcut
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows

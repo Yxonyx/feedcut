@@ -1,4 +1,4 @@
-package io.github.yxonyx.kapu
+package io.github.yxonyx.feedcut
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Intent
@@ -216,7 +216,7 @@ class GateService : AccessibilityService() {
     }
 
     private companion object {
-        const val TAG = "Kapu"
+        const val TAG = "Feedcut"
         const val DEBOUNCE_MS = 800L
         const val SETTLE_MS = 120L
         const val RULES_CHECK_MS = 3000L

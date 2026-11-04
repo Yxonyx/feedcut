@@ -41,18 +41,18 @@ jobs:
 
       - name: Signed release APK
         env:
-          KAPU_STORE_BASE64: ${{ secrets.KAPU_STORE_BASE64 }}
-          KAPU_STORE_PASSWORD: ${{ secrets.KAPU_STORE_PASSWORD }}
-          KAPU_KEY_ALIAS: ${{ secrets.KAPU_KEY_ALIAS }}
-          KAPU_KEY_PASSWORD: ${{ secrets.KAPU_KEY_PASSWORD }}
+          FEEDCUT_STORE_BASE64: ${{ secrets.FEEDCUT_STORE_BASE64 }}
+          FEEDCUT_STORE_PASSWORD: ${{ secrets.FEEDCUT_STORE_PASSWORD }}
+          FEEDCUT_KEY_ALIAS: ${{ secrets.FEEDCUT_KEY_ALIAS }}
+          FEEDCUT_KEY_PASSWORD: ${{ secrets.FEEDCUT_KEY_PASSWORD }}
         run: |
-          echo "$KAPU_STORE_BASE64" | base64 -d > release.jks
-          KAPU_STORE_FILE=release.jks ./gradlew --no-daemon :app:assembleRelease
+          echo "$FEEDCUT_STORE_BASE64" | base64 -d > release.jks
+          FEEDCUT_STORE_FILE=release.jks ./gradlew --no-daemon :app:assembleRelease
           rm release.jks
-          cp app/build/outputs/apk/release/app-release.apk "kapu-${GITHUB_REF_NAME}.apk"
-          sha256sum "kapu-${GITHUB_REF_NAME}.apk" > "kapu-${GITHUB_REF_NAME}.apk.sha256"
+          cp app/build/outputs/apk/release/app-release.apk "feedcut-${GITHUB_REF_NAME}.apk"
+          sha256sum "feedcut-${GITHUB_REF_NAME}.apk" > "feedcut-${GITHUB_REF_NAME}.apk.sha256"
 
       - name: GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" kapu-*.apk kapu-*.apk.sha256 --generate-notes
+        run: gh release create "$GITHUB_REF_NAME" feedcut-*.apk feedcut-*.apk.sha256 --generate-notes

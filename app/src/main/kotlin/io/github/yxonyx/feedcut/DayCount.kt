@@ -1,11 +1,11 @@
-package io.github.yxonyx.kapu
+package io.github.yxonyx.feedcut
 
 import android.content.Context
 import androidx.core.content.edit
 import java.time.LocalDate
 
 object DayCount {
-    private const val PREFS = "kapu_count"
+    private const val PREFS = "feedcut_count"
     private const val DAY = "day"
     private const val N = "n"
 

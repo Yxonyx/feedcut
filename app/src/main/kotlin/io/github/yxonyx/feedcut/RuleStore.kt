@@ -1,4 +1,4 @@
-package io.github.yxonyx.kapu
+package io.github.yxonyx.feedcut
 
 import android.content.Context
 import androidx.annotation.StringRes

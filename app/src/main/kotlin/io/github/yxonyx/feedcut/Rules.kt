@@ -1,4 +1,4 @@
-package io.github.yxonyx.kapu
+package io.github.yxonyx.feedcut
 
 /**
  * Decisions without the view tree. The service passes only visible view ids,
@@ -29,7 +29,7 @@ data class SeenTab(
     val selected: Boolean,
 )
 
-/** version numbers the default rules. It tells Kapu to merge after an app update. */
+/** version numbers the default rules. It tells Feedcut to merge after an app update. */
 data class RuleSet(
     val apps: List<AppRule>,
     val version: Int = 0,
@@ -39,7 +39,7 @@ fun activeHints(rule: AppRule): List<String> =
     if (!rule.enabled) emptyList() else rule.hints.map { it.trim() }.filter { it.isNotEmpty() }
 
 /**
- * If Kapu had to leave the same app moments ago, Back was not enough
+ * If Feedcut had to leave the same app moments ago, Back was not enough
  * (for example the user tapped straight back in), so go Home.
  */
 fun escalate(action: GateAction, sameAppJustNow: Boolean): GateAction =

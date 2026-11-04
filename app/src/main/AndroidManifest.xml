@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Only to see whether a rule's app is installed. Kapu does not ask for the full app list. -->
+    <!-- Only to see whether a rule's app is installed. Feedcut does not ask for the full app list. -->
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />
@@ -16,7 +16,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Kapu">
+        android:theme="@style/Theme.Feedcut">
 
         <activity
             android:name=".MainActivity"

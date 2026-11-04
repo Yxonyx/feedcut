@@ -1,13 +1,13 @@
-package io.github.yxonyx.kapu
+package io.github.yxonyx.feedcut
 
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.content.edit
 import androidx.core.content.pm.PackageInfoCompat
 
-/** Per app: when Kapu last closed a screen, and the app's version at that time. Stays on the phone. */
+/** Per app: when Feedcut last closed a screen, and the app's version at that time. Stays on the phone. */
 object BlockLog {
-    private const val PREFS = "kapu_blocks"
+    private const val PREFS = "feedcut_blocks"
 
     fun record(context: Context, packageName: String) {
         val version = installedVersion(context, packageName)

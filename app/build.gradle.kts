@@ -12,11 +12,11 @@ val signing = Properties().apply {
 fun secret(key: String, env: String): String? = signing.getProperty(key) ?: System.getenv(env)
 
 android {
-    namespace = "io.github.yxonyx.kapu"
+    namespace = "io.github.yxonyx.feedcut"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "io.github.yxonyx.kapu"
+        applicationId = "io.github.yxonyx.feedcut"
         minSdk = 26
         targetSdk = 36
         versionCode = 2
@@ -24,13 +24,13 @@ android {
     }
 
     signingConfigs {
-        val store = secret("storeFile", "KAPU_STORE_FILE")
+        val store = secret("storeFile", "FEEDCUT_STORE_FILE")
         if (store != null) {
             create("release") {
                 storeFile = rootProject.file(store)
-                storePassword = secret("storePassword", "KAPU_STORE_PASSWORD")
-                keyAlias = secret("keyAlias", "KAPU_KEY_ALIAS")
-                keyPassword = secret("keyPassword", "KAPU_KEY_PASSWORD")
+                storePassword = secret("storePassword", "FEEDCUT_STORE_PASSWORD")
+                keyAlias = secret("keyAlias", "FEEDCUT_KEY_ALIAS")
+                keyPassword = secret("keyPassword", "FEEDCUT_KEY_PASSWORD")
             }
         }
     }

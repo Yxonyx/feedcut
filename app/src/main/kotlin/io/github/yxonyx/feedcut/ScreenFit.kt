@@ -1,4 +1,4 @@
-package io.github.yxonyx.kapu
+package io.github.yxonyx.feedcut
 
 import android.content.res.Configuration
 import android.view.View

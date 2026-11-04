@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Kapu</string>
-    <string name="service_label">Kapu</string>
-    <string name="service_description">A Kapu csak azokat az appokat nézi, amiket a Kapuban bekapcsolsz. Ha egy beállított képernyőjelet lát, Vissza vagy Home gombot nyom. Üzenetet, jelszót, képet nem olvas, és internetet nem használ.</string>
+    <string name="app_name">Feedcut</string>
+    <string name="service_label">Feedcut</string>
+    <string name="service_description">A Feedcut csak azokat az appokat nézi, amiket a Feedcutban bekapcsolsz. Ha egy beállított képernyőjelet lát, Vissza vagy Home gombot nyom. Üzenetet, jelszót, képet nem olvas, és internetet nem használ.</string>
     <string name="lead">A szabályok ezen a telefonon vannak. Az app nem kér internetet, nincs fiók, nincs bolt, és a mentés ki van kapcsolva.</string>
     <string name="open_access">Kisegítő lehetőségek</string>
     <string name="open_settings">App beállításai</string>
@@ -12,12 +12,12 @@
     <string name="action_back">Vissza</string>
     <string name="action_home">Home</string>
     <string name="save">Mentés</string>
-    <string name="status_on">A Kapu be van kapcsolva.</string>
-    <string name="status_off">A Kapu ki van kapcsolva. A rendszerbeállítóban te kapcsolod be.</string>
+    <string name="status_on">A Feedcut be van kapcsolva.</string>
+    <string name="status_off">A Feedcut ki van kapcsolva. A rendszerbeállítóban te kapcsolod be.</string>
     <string name="today_count">Ma kivett képernyő: %1$d</string>
-    <string name="restricted_hint">Ha a Kisegítő lehetőségekben a Kapu szürke: App beállításai, jobb felül három pont, Korlátozott beállítások engedélyezése. Android 13-tól így van minden nem boltból telepített appnál.</string>
-    <string name="battery_hint">Sok telefon pár perc után leállítja a háttérben futó appokat, és akkor a Kapu nem kap jelet. Az App beállításaiban az akkumulátorhasználat legyen Nincs korlátozás.</string>
-    <string name="battery_hint_xiaomi">Xiaomin, Redmin és POCO-n ez kötelező: Akkumulátorkímélő, Nincs korlátozás, és az automatikus indítás Be. Enélkül a HyperOS pár perc után lefagyasztja a Kaput.</string>
+    <string name="restricted_hint">Ha a Kisegítő lehetőségekben a Feedcut szürke: App beállításai, jobb felül három pont, Korlátozott beállítások engedélyezése. Android 13-tól így van minden nem boltból telepített appnál.</string>
+    <string name="battery_hint">Sok telefon pár perc után leállítja a háttérben futó appokat, és akkor a Feedcut nem kap jelet. Az App beállításaiban az akkumulátorhasználat legyen Nincs korlátozás.</string>
+    <string name="battery_hint_xiaomi">Xiaomin, Redmin és POCO-n ez kötelező: Akkumulátorkímélő, Nincs korlátozás, és az automatikus indítás Be. Enélkül a HyperOS pár perc után lefagyasztja a Feedcutot.</string>
     <string name="open_battery">Akkumulátor-beállítás</string>
     <string name="open_autostart">Automatikus indítás</string>
     <string name="open_dontkill">A te telefonod: dontkillmyapp.com</string>
@@ -28,9 +28,9 @@
     <string name="err_package">Hibás csomagnév az apps[%1$d] helyen.</string>
     <string name="err_action">Az action csak back vagy home lehet (%1$s).</string>
     <string name="reset_confirm">Visszaállítod a gyári szabályokat? A kapcsolóid és a jeleid felülíródnak.</string>
-    <string name="rules_recovered">A szabályfájl sérült volt. A Kapu elmentette rules.broken.json néven, és visszaállította a gyári szabályokat.</string>
+    <string name="rules_recovered">A szabályfájl sérült volt. A Feedcut elmentette rules.broken.json néven, és visszaállította a gyári szabályokat.</string>
     <string name="health_never">Még nem zárt be képernyőt.</string>
     <string name="health_last">Utoljára %1$s zárt be képernyőt.</string>
-    <string name="health_updated">Az app frissült, mióta a Kapu utoljára bezárt benne egy képernyőt. Ha most átjut, a szabály eltörhetett.</string>
-    <string name="status_stuck">A Kapu be van kapcsolva, de az Android nem futtatja. A Kisegítő lehetőségekben kapcsold ki, majd be.</string>
+    <string name="health_updated">Az app frissült, mióta a Feedcut utoljára bezárt benne egy képernyőt. Ha most átjut, a szabály eltörhetett.</string>
+    <string name="status_stuck">A Feedcut be van kapcsolva, de az Android nem futtatja. A Kisegítő lehetőségekben kapcsold ki, majd be.</string>
 </resources>

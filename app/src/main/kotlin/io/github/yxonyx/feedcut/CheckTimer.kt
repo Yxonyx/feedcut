@@ -1,4 +1,4 @@
-package io.github.yxonyx.kapu
+package io.github.yxonyx.feedcut
 
 /**
  * When to run the next check. No Android calls, so it can be unit tested.

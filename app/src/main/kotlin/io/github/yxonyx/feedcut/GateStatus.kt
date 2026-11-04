@@ -1,4 +1,4 @@
-package io.github.yxonyx.kapu
+package io.github.yxonyx.feedcut
 
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context

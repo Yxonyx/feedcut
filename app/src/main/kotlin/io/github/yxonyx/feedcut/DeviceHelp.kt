@@ -1,4 +1,4 @@
-package io.github.yxonyx.kapu
+package io.github.yxonyx.feedcut
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
