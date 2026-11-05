@@ -11,6 +11,4 @@ captures/
 *.jks
 *.keystore
 .claude/settings.local.json
-.impeccable/mocks/
-.impeccable/review/
-.impeccable/tmp/
+.impeccable/
