@@ -6,6 +6,7 @@ All notable changes to Feedcut. Versions follow [Semantic Versioning](https://se
 
 ### Fixed
 - A screen that was still opening could be missed when the app sent no more events, for example on Android 8. After a window change that showed nothing, Feedcut now checks again twice on its own.
+- Tapping back into a cut screen within a few seconds threw the user out of the app, and reopening the app did it again. Feedcut now presses Back three times before it goes Home, and starts over with Back after that.
 - The "Allow restricted settings" hint only shows on Android 13 and later, where the setting exists.
 
 ### Added

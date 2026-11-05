@@ -153,10 +153,16 @@ class RulesTest {
     }
 
     @Test
-    fun repeatedLeaveGoesHome() {
-        assertEquals(GateAction.BACK, escalate(GateAction.BACK, sameAppJustNow = false))
-        assertEquals(GateAction.HOME, escalate(GateAction.BACK, sameAppJustNow = true))
-        assertEquals(GateAction.HOME, escalate(GateAction.HOME, sameAppJustNow = false))
+    fun tappingBackInStaysInTheApp() {
+        assertEquals(GateAction.BACK, escalate(GateAction.BACK, backsInARow = 0))
+        assertEquals(GateAction.BACK, escalate(GateAction.BACK, backsInARow = 1))
+        assertEquals(GateAction.BACK, escalate(GateAction.BACK, backsInARow = BACKS_BEFORE_HOME - 1))
+    }
+
+    @Test
+    fun aScreenThatIgnoresBackGoesHome() {
+        assertEquals(GateAction.HOME, escalate(GateAction.BACK, backsInARow = BACKS_BEFORE_HOME))
+        assertEquals(GateAction.HOME, escalate(GateAction.HOME, backsInARow = 0))
     }
 
     @Test

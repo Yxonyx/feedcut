@@ -55,11 +55,11 @@ fun activeHints(rule: AppRule): List<String> =
     if (!rule.enabled) emptyList() else rule.hints.map { it.trim() }.filter { it.isNotEmpty() }
 
 /**
- * If Feedcut had to leave the same app moments ago, Back was not enough
- * (for example the user tapped straight back in), so go Home.
+ * Home throws the user out of the app, and a user tapping straight back in looks the same
+ * as a Back that did nothing. So only several Backs in a row with no effect end in Home.
  */
-fun escalate(action: GateAction, sameAppJustNow: Boolean): GateAction =
-    if (sameAppJustNow) GateAction.HOME else action
+fun escalate(action: GateAction, backsInARow: Int): GateAction =
+    if (backsInARow >= BACKS_BEFORE_HOME) GateAction.HOME else action
 
 fun actionOf(rule: AppRule): GateAction =
     if (rule.action == "home") GateAction.HOME else GateAction.BACK
@@ -194,6 +194,7 @@ fun gateState(enabled: Boolean, running: Boolean): GateState = when {
  */
 const val MINUTES_PER_CUT = 1
 
+const val BACKS_BEFORE_HOME = 3
 const val MS_PER_MINUTE = 60_000L
 const val MAX_DAILY_MINUTES = 24 * 60
 

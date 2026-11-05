@@ -39,6 +39,7 @@ class GateService : AccessibilityService() {
     private var pendingPackage: String? = null
     private var lastActPackage: String? = null
     private var lastActAt = 0L
+    private var backsInARow = 0
     private val check: Runnable = Runnable {
         timer.onFire(SystemClock.elapsedRealtime())?.let { wait ->
             handler.postDelayed(check, wait)
@@ -121,18 +122,18 @@ class GateService : AccessibilityService() {
     private fun act(rule: AppRule, tab: AccessibilityNodeInfo? = null) {
         val now = SystemClock.elapsedRealtime()
         if (!timer.canAct(now)) return
-        val sameAppJustNow = rule.packageName == lastActPackage && now - lastActAt < ESCALATE_MS
+        if (rule.packageName != lastActPackage || now - lastActAt >= ESCALATE_MS) backsInARow = 0
         // A tab rule only ever taps the tab: Back or Home would throw the user out of the app.
-        val performed = if (tab != null) {
-            tab.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-        } else {
-            when (escalate(actionOf(rule), sameAppJustNow)) {
-                GateAction.BACK -> performGlobalAction(GLOBAL_ACTION_BACK)
-                GateAction.HOME -> performGlobalAction(GLOBAL_ACTION_HOME)
-            }
+        val goHome = tab == null && escalate(actionOf(rule), backsInARow) == GateAction.HOME
+        val performed = when {
+            tab != null -> tab.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            goHome -> performGlobalAction(GLOBAL_ACTION_HOME)
+            else -> performGlobalAction(GLOBAL_ACTION_BACK)
         }
         if (performed) {
             timer.acted(now)
+            // Home leaves the app on the cut screen, so reopening it starts with Back again.
+            backsInARow = if (goHome) 0 else backsInARow + 1
             lastActPackage = rule.packageName
             lastActAt = now
             DayCount.bump(this)
