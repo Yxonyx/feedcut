@@ -1,0 +1,19 @@
+# Changelog
+
+All notable changes to Feedcut. Versions follow [Semantic Versioning](https://semver.org); the rules file has its own `version` number, listed with each release.
+
+## 1.1.0 (versionCode 2), rules version 4
+
+First public release.
+
+### Added
+- Leaves Instagram Reels, YouTube Shorts (also YouTube ReVanced) and the TikTok video feed.
+- Keeps Facebook to Marketplace and Groups by tapping the Marketplace tab when another tab opens (`allowTabs`).
+- Main screen: on, off or stuck; screens cut today with an estimate of the time kept; the last 7 days; per-app state.
+- Rule health: the main screen says when an app updated after the last cut, so the rule may be broken.
+- Setup steps for the accessibility service, battery and (Xiaomi) Autostart, with direct links to each settings screen.
+- Advanced screen: per-app Back or Home, screen markers, the raw rules file with validation, restore defaults.
+- Rules updates merge into the user's file (three-way merge), so app updates keep user edits.
+
+### Privacy
+- No `INTERNET` permission, no analytics, backup off.

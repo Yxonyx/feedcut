@@ -1,0 +1,6 @@
+First public release.
+- Closes Instagram Reels, YouTube Shorts (also ReVanced) and the TikTok video feed.
+- Keeps Facebook to Marketplace and Groups.
+- Shows on, off or stuck, cuts today, and the last 7 days.
+- Warns when an app update may have broken a rule.
+- Rules file with an in-app editor; updates keep your edits.

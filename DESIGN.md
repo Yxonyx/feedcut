@@ -283,6 +283,19 @@ Each step is a 14x20dp waymark beside a title, an optional detail and its action
 ### Navigation
 No app bar, tabs or nav drawer. Secondary screens are reached from one full-width, 56dp ruled text row ("Advanced: screen markers and rules file") at the end of the main column, with the standard ripple. The Advanced screen reuses the column, gutter and headline style; system Back returns.
 
+### Advanced Screen
+The same column, gutter and headline as the main screen, in three sections set apart by space and section labels: Screen markers, Rules file, Your phone. It ends with a body-small version line ("Feedcut 1.1.0 · rules version 4").
+- **Rule rows:** hairline-ruled like app rows. App name in body over the package in body small (one line, middle-ellipsized), the Back/Home toggle at the end, the markers field below.
+- **Back/Home toggle:** two outlined segments with cut-board corners and condensed uppercase labels. The chosen segment is painted ink with a ground-coloured label; the other stays bare. Never red: this is a setting, not the next step.
+- **Markers field:** Material outlined text field with 3dp corners, lichen stroke turning ink on focus. The ids are monospace; the floating label stays in the system sans.
+- **Tab rules:** a rule with `allowTabs` (Facebook) shows no toggle and no field, only a body-small line naming the allowed tab, because Back, Home and markers do not apply to it.
+
+### Rules File Editor
+Headline, one body-small line saying that a file that cannot be read is not saved, then the raw JSON on a cut board (surface paint, 1dp hairline edge, 3dp corners, 12dp padding, 13sp monospace). The filled Save button sits below it; it is the screen's one next step. Back with unsaved edits asks first.
+
+### Dialogs
+Material alert dialogs with cut-board corners (3dp). Both buttons use the condensed uppercase label face in ink. Red text is not used here, since red on the dialog surface falls under 4.5:1 in the dark scheme.
+
 ### Launcher Mark
 An adaptive icon on granite: three blaze-white boards (a feed of posts) sliced on a 28 degree cut, the halves slid apart along it, with a blaze red band lying in the cut. The monochrome layer leaves the cut empty. Icon layers and `docs/logo.svg` are generated from one geometry by `tools/make_icon.py`; change the script, not its output.
 

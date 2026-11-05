@@ -1,6 +1,26 @@
-# Feedcut
+<p align="center"><img src="fastlane/metadata/android/en-US/images/icon.png" width="96" alt=""></p>
 
-An Android app that closes Instagram Reels, YouTube Shorts and TikTok the moment they open, and keeps Facebook to Marketplace and Groups. It has no internet permission.
+<h1 align="center">Feedcut</h1>
+
+<p align="center">
+An Android app that closes Instagram Reels, YouTube Shorts and TikTok the moment they open,<br>
+and keeps Facebook to Marketplace and Groups. It has no internet permission.
+</p>
+
+<p align="center">
+<a href="../../releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/Yxonyx/feedcut?label=release"></a>
+<a href="../../actions/workflows/build.yml"><img alt="Build" src="https://github.com/Yxonyx/feedcut/actions/workflows/build.yml/badge.svg"></a>
+<a href="LICENSE"><img alt="License: GPL-3.0" src="https://img.shields.io/badge/license-GPL--3.0-blue"></a>
+<img alt="Android 8.0+" src="https://img.shields.io/badge/Android-8.0%2B-3DDC84">
+</p>
+
+<p align="center">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1_main_light.png" width="250" alt="Main screen, light: on, 3 feeds cut today, the last 7 days">
+&nbsp;
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2_main_dark.png" width="250" alt="Main screen, dark">
+&nbsp;
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3_advanced_dark.png" width="250" alt="Advanced: Back or Home and screen markers per app">
+</p>
 
 | App | What Feedcut does |
 | --- | --- |
@@ -21,6 +41,14 @@ An Android app that closes Instagram Reels, YouTube Shorts and TikTok the moment
 
 1. Download the APK from [Releases](../../releases). You can also add this repository to [Obtainium](https://github.com/ImranR98/Obtainium) to get updates.
 2. Open it and allow the install.
+
+Every release is signed with the same key. To check that an APK is the real one (for example with [AppVerifier](https://github.com/soupslurpr/AppVerifier)), its signing certificate's SHA-256 is:
+
+```
+1E:FA:60:DC:75:B6:27:D3:E7:59:EC:F3:39:26:68:42:71:80:C1:24:24:DD:19:F1:3D:98:FC:39:A6:69:5E:AE
+```
+
+The build is reproducible: two clean builds of the same commit give byte-identical APKs.
 
 Android 8.0 or newer (API 26).
 
@@ -62,7 +90,7 @@ Apps rename their screens without notice, so every rule has a date. If a rule he
 | --- | --- | --- |
 | Instagram Reels | 2026-11-02 | Xiaomi 17, HyperOS, Android 16 |
 | Facebook tab bar | 2026-11-02 | Xiaomi 17, HyperOS, Android 16, Hungarian UI |
-| YouTube Shorts | 2026-11-04 | Android 16 emulator, YouTube 21.42.243 |
+| YouTube Shorts | 2026-11-05 | Android 16 emulator, YouTube 21.42.243, release build |
 | TikTok | not checked | |
 
 When you confirm or fix a rule, update its row in the same pull request.
@@ -109,7 +137,13 @@ keyAlias=feedcut
 keyPassword=...
 ```
 
-Pushing a `v*` tag builds a signed APK on GitHub Actions and attaches it to a release. It needs the secrets `FEEDCUT_STORE_BASE64`, `FEEDCUT_STORE_PASSWORD`, `FEEDCUT_KEY_ALIAS` and `FEEDCUT_KEY_PASSWORD` in a protected `release` environment.
+Release builds are shrunk with R8 (about 1.6 MB). Releases are built and signed by the maintainer from the tagged commit; the checksum file next to each APK lets you compare it with your own build.
+
+CI can sign releases too. It is off until the repository variable `CI_RELEASE` is `true`; then pushing a `v*` tag builds a signed APK and attaches it to a release. It needs the secrets `FEEDCUT_STORE_BASE64`, `FEEDCUT_STORE_PASSWORD`, `FEEDCUT_KEY_ALIAS` and `FEEDCUT_KEY_PASSWORD` in a protected `release` environment.
+
+## Contributing
+
+Rule fixes are the most useful contribution: see [CONTRIBUTING.md](CONTRIBUTING.md). Security problems go through [SECURITY.md](SECURITY.md), not public issues. Changes are listed in [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

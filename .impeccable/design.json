@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-04T22:56:54+00:00",
+  "generatedAt": "2026-11-05T00:35:48Z",
   "title": "Design System: Feedcut",
   "extensions": {
     "platform": "android-views",
@@ -369,7 +369,7 @@
       "refersTo": "button-primary",
       "description": "The single filled button on a screen: the next step to take.",
       "html": "<button class=\"ds-btn-primary\">Accessibility</button>",
-      "css": ".ds-btn-primary{background:#B81F18;color:#F4F2EC;border:none;border-radius:3px;height:40px;padding:0 24px;min-width:240px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;transition:filter .15s}.ds-btn-primary:hover{filter:brightness(1.08)}.ds-btn-primary:active{filter:brightness(.92)}.ds-btn-primary:focus-visible{outline:2px solid #17191A;outline-offset:2px}@media (prefers-color-scheme: dark){.ds-btn-primary{background:#D7261E}.ds-btn-primary:focus-visible{outline-color:#F4F2EC}}"
+      "css": ".ds-btn-primary{background:#B81F18;color:#F4F2EC;border:none;border-radius:3px;height:40px;padding:0 24px;min-width:240px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;transition:filter .15s}.ds-btn-primary:hover{filter:brightness(1.08)}.ds-btn-primary:active{filter:brightness(.92)}.ds-btn-primary:focus-visible{outline:2px solid #17191A;outline-offset:2px}@media (prefers-color-scheme: dark){.ds-btn-primary{background:#CF231B}.ds-btn-primary:focus-visible{outline-color:#F4F2EC}}"
     },
     {
       "name": "Outlined Button",
@@ -426,6 +426,22 @@
       "description": "Uppercase condensed section heading; the single ruled text row that leads to Advanced.",
       "html": "<div class=\"ds-nav\"><h3 class=\"ds-section\">Apps</h3><a class=\"ds-adv\" href=\"#\">Advanced: screen markers and rules file</a></div>",
       "css": ".ds-nav{max-width:360px}.ds-section{margin:0 0 4px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:#55574F}.ds-adv{display:flex;align-items:center;min-height:56px;border-top:1px solid #CFCCC2;border-bottom:1px solid #CFCCC2;font-family:Roboto,sans-serif;font-size:16px;line-height:24px;color:#17191A;text-decoration:none;transition:background .15s}.ds-adv:hover{background:rgba(23,25,26,.05)}.ds-adv:focus-visible{outline:2px solid #17191A;outline-offset:2px}@media (prefers-color-scheme: dark){.ds-section{color:#A3A59F}.ds-adv{color:#F4F2EC;border-color:#303332}.ds-adv:hover{background:rgba(244,242,236,.06)}.ds-adv:focus-visible{outline-color:#F4F2EC}}"
+    },
+    {
+      "name": "Back/Home Toggle",
+      "kind": "control",
+      "refersTo": "advanced-toggle",
+      "description": "Per-app action on the Advanced screen. The chosen segment is painted ink; never red.",
+      "html": "<div class=\"ds-toggle\" role=\"radiogroup\" aria-label=\"Back or Home\"><button role=\"radio\" aria-checked=\"true\" class=\"on\">Back</button><button role=\"radio\" aria-checked=\"false\">Home</button></div>",
+      "css": ".ds-toggle{display:inline-flex}.ds-toggle button{min-width:72px;height:40px;border:1px solid #55574F;background:transparent;color:#17191A;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer}.ds-toggle button:first-child{border-radius:3px 0 0 3px}.ds-toggle button:last-child{border-radius:0 3px 3px 0;border-left:none}.ds-toggle button.on{background:#17191A;color:#EDEBE4}@media (prefers-color-scheme: dark){.ds-toggle button{border-color:#A3A59F;color:#F4F2EC}.ds-toggle button.on{background:#F4F2EC;color:#17191A}}"
+    },
+    {
+      "name": "Markers Field",
+      "kind": "input",
+      "refersTo": "advanced-field",
+      "description": "Outlined field for screen markers: 3dp corners, monospace ids, label in the system sans.",
+      "html": "<label class=\"ds-field\"><span>Screen markers</span><textarea rows=\"2\">clips_viewer, clips_swipe_refresh</textarea></label>",
+      "css": ".ds-field{display:block;position:relative;border:1px solid #55574F;border-radius:3px;padding:14px 12px 10px}.ds-field:focus-within{border-color:#17191A}.ds-field span{position:absolute;top:-9px;left:10px;padding:0 4px;background:#EDEBE4;color:#55574F;font:12px Roboto,sans-serif}.ds-field textarea{width:100%;border:none;background:transparent;resize:none;color:#17191A;font:14px ui-monospace,monospace;outline:none}@media (prefers-color-scheme: dark){.ds-field{border-color:#A3A59F}.ds-field:focus-within{border-color:#F4F2EC}.ds-field span{background:#17191A;color:#A3A59F}.ds-field textarea{color:#F4F2EC}}"
     }
   ],
   "narrative": {

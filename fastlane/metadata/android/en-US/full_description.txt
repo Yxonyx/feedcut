@@ -1,0 +1,16 @@
+<p>Feedcut closes Instagram Reels, YouTube Shorts and TikTok the moment they open, and keeps Facebook to Marketplace and Groups. The rest of each app keeps working: Instagram feed, Stories and messages, normal YouTube videos and search, Facebook Marketplace and Groups.</p>
+
+<p><b>How it works.</b> Feedcut is an accessibility service. When an app you switched on shows a short-video screen, Feedcut presses Back or Home. On Facebook it taps the Marketplace tab whenever another tab opens. It recognises screens by their view ids. It does not read your messages, your posts, or what is on screen, except the labels of Facebook's bottom tab bar.</p>
+
+<p><b>Private by design.</b></p>
+<ul>
+<li>No internet permission. Feedcut cannot send anything anywhere.</li>
+<li>No account, no analytics, no ads.</li>
+<li>Backup is off. Uninstalling removes everything.</li>
+</ul>
+
+<p><b>Rules you can read.</b> Every blocked screen is a line in a JSON file. When an app renames a screen, you can fix the rule on your phone the same day, and new Feedcut versions keep your edits. The main screen warns you when an app has updated and the rule may have broken.</p>
+
+<p><b>Setup.</b> Turn on the accessibility service. On Android 13 and later you may first have to allow restricted settings for Feedcut. On Xiaomi, Redmi and POCO phones, also set battery saver to No restrictions and turn on Autostart; otherwise the system freezes Feedcut after a few minutes. Feedcut walks you through each step.</p>
+
+<p>Feedcut is a habit aid, not a lock: you can switch it off at any time.</p>
