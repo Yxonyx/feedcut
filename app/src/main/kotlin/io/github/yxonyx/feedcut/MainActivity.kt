@@ -1,6 +1,7 @@
 package io.github.yxonyx.feedcut
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
@@ -86,7 +87,11 @@ class MainActivity : AppCompatActivity() {
             R.string.step_access,
             done = accessOk,
             detail = when (state) {
-                GateState.OFF -> getString(R.string.step_access_off)
+                // Restricted settings only exist from Android 13.
+                GateState.OFF -> getString(
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) R.string.step_access_off
+                    else R.string.step_access_off_old,
+                )
                 GateState.STUCK -> getString(R.string.step_access_stuck)
                 GateState.ON -> null
             },
@@ -111,6 +116,18 @@ class MainActivity : AppCompatActivity() {
                 done = false,
                 detail = getString(R.string.step_autostart_detail),
                 actions = listOf(R.string.open_autostart to { DeviceHelp.openAutostart(this) }),
+            )
+        }
+        DeviceHelp.vendorStep?.let { detail ->
+            step(
+                steps,
+                R.string.step_vendor,
+                done = false,
+                detail = getString(detail),
+                actions = listOf(
+                    R.string.open_guide to { DeviceHelp.openDontKillMyApp(this) },
+                    R.string.open_settings to { DeviceHelp.openAppSettings(this) },
+                ),
             )
         }
     }

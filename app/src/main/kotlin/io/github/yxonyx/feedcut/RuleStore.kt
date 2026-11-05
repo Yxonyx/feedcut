@@ -125,6 +125,7 @@ object RuleStore {
             if (packageName.isEmpty() || packageName.contains(' ')) {
                 throw RuleError(R.string.err_package, i)
             }
+            if (packageName in PROTECTED_PACKAGES) throw RuleError(R.string.err_protected, packageName)
             val action = item.optString("action", "back")
             if (action != "back" && action != "home") {
                 throw RuleError(R.string.err_action, packageName)

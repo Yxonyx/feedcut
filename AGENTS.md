@@ -20,6 +20,7 @@ Feedcut is an Android accessibility service that leaves short-video screens (Ree
 
 - **No `INTERNET` permission and no network code.** This is the project's main promise. Do not add analytics, crash reporting, remote rules or any library that pulls in networking.
 - **Do not read text.** The service compares view ids. The only exception is `allowTabs`, which reads the bottom tab bar's labels. Do not widen this.
+- **Never act on `PROTECTED_PACKAGES`** (Feedcut, Settings, system UI, package installer). The user must always be able to switch Feedcut off.
 - **Bump `version` in `rules.json`** whenever you change the default rules. Without it, installed phones never get the change.
 - **Update the Rule status table in `README.md`** when you check or fix a rule.
 - Keep the code style: small files, comments only where the reason is not obvious, no new dependencies without a reason in the PR.

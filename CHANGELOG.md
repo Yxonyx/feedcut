@@ -4,6 +4,14 @@ All notable changes to Feedcut. Versions follow [Semantic Versioning](https://se
 
 ## Unreleased
 
+### Fixed
+- A screen that was still opening could be missed when the app sent no more events, for example on Android 8. After a window change that showed nothing, Feedcut now checks again twice on its own.
+- The "Allow restricted settings" hint only shows on Android 13 and later, where the setting exists.
+
+### Added
+- A rule can no longer block Feedcut itself, Settings, the system UI or the package installer, so the user can always switch Feedcut off.
+- A setup step for OPPO, realme, OnePlus, vivo, iQOO, Huawei and Honor, which have a background switch of their own.
+
 ### Changed
 - License: Apache-2.0 instead of GPL-3.0. Version 1.1.0 stays available under GPL-3.0.
 

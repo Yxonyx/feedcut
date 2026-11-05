@@ -44,4 +44,13 @@ class RuleStoreTest {
             RuleStore.parse("""{"apps": [{"package": "x.y", "action": "sideways"}]}""")
         }
     }
+
+    @Test
+    fun rulesCannotLockTheUserOut() {
+        for (protected in listOf(BuildConfig.APPLICATION_ID, "com.android.settings", "com.android.systemui")) {
+            assertThrows(RuleError::class.java) {
+                RuleStore.parse("""{"apps": [{"package": "$protected", "enabled": true, "hints": ["*"]}]}""")
+            }
+        }
+    }
 }

@@ -36,6 +36,33 @@ class CheckTimerTest {
     }
 
     @Test
+    fun windowChangeGetsFollowUpChecks() {
+        val t = CheckTimer(settleMs = 120, debounceMs = 800, followUpMs = 400, followUps = 2)
+        t.onEvent(windowChanged = true)
+        assertNull(t.onFire(now = 10_000))
+        assertEquals(400L, t.foundNothing())
+        assertNull(t.onFire(now = 10_400))
+        assertEquals(400L, t.foundNothing())
+        assertNull(t.onFire(now = 10_800))
+        assertNull(t.foundNothing())
+    }
+
+    @Test
+    fun contentEventsDoNotAddFollowUps() {
+        val t = CheckTimer(settleMs = 120, debounceMs = 800, followUpMs = 400, followUps = 2)
+        t.onEvent(windowChanged = false)
+        assertNull(t.onFire(now = 10_000))
+        assertNull(t.foundNothing())
+    }
+
+    @Test
+    fun followUpWaitsForAPendingCheck() {
+        val t = CheckTimer(settleMs = 120, debounceMs = 800, followUpMs = 400, followUps = 2)
+        t.onEvent(windowChanged = true)
+        assertNull(t.foundNothing())
+    }
+
+    @Test
     fun canActRespectsDebounce() {
         val t = timer()
         assertTrue(t.canAct(now = 0))

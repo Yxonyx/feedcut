@@ -62,7 +62,8 @@ The order matters. Feedcut does nothing until all four steps are done.
 2. **If the switch is greyed out** (Android 13 and later, for apps installed outside a store): go back to Feedcut, tap *App settings*, open the three-dot menu at the top right and choose *Allow restricted settings*. On some phones this menu item only appears after you have tried step 1 once. Then repeat step 1.
 3. **Stop the phone from killing it.** In *App settings*, set battery usage to *Unrestricted*.
    - Xiaomi, Redmi, POCO (HyperOS, MIUI): *Battery saver: No restrictions* and *Autostart: on*. This is required. Without it HyperOS freezes Feedcut after a few minutes and blocking quietly stops. Feedcut has buttons for both screens.
-   - Samsung, OnePlus, Oppo, Realme, Vivo, Huawei, Honor: see [dontkillmyapp.com](https://dontkillmyapp.com) for your phone. Feedcut opens your phone's page there.
+   - OPPO, realme, OnePlus, vivo, iQOO, Huawei, Honor: one more background switch. Feedcut shows it as a setup step and opens your phone's page on [dontkillmyapp.com](https://dontkillmyapp.com).
+   - Other phones: if blocking stops after a while, see [dontkillmyapp.com](https://dontkillmyapp.com). The Advanced screen links to your phone's page.
 4. **Facebook only:** Marketplace has to be in your Facebook tab bar. If it isn't, add it in Facebook under Settings, Tab bar. Close Facebook once after installing or updating Feedcut, because a Facebook that was already running does not send events to a newly installed service.
 
 ## The rules file
@@ -110,13 +111,33 @@ If the dump fails while a video plays, pause it first. Then open an issue with t
 
 Using a coding agent? [`AGENTS.md`](AGENTS.md) and the `fix-rule` skill walk it through the same steps.
 
-## Limits
+## Who it works for
 
-- **Browsers are not covered.** facebook.com, instagram.com and youtube.com in a browser work as usual.
-- **Facebook tab names depend on your language.** `allowTabs` matches the label before the first comma ("Marketplace, tab 4 of 6"). In most languages it is "Marketplace". If yours differs, add your label to `allowTabs`.
-- **It is an accessibility service, not a lock.** You can switch it off in a few taps. It helps against habit, not against determination.
-- **Android 16 Advanced Protection** turns off accessibility services that are not accessibility tools, Feedcut included.
-- **Tested on:** see *Rule status*. Only Xiaomi (HyperOS) and stock Android so far. Reports from other phones are welcome.
+| Phone | Works? | What it needs |
+| --- | --- | --- |
+| Android 8.0 to 16 (API 26 to 36) | Yes | Tested on Android 16 (Xiaomi 17 and emulator) and Android 8.0 (emulator). Android 7 and older cannot install it. |
+| Pixel, Motorola, Nokia, Sony, stock Android | Yes | The accessibility service and *Battery: Unrestricted*. |
+| Samsung | Should work | *Battery: Unrestricted* also takes Feedcut off Samsung's sleeping apps list. Not tested on a Samsung yet. |
+| Xiaomi, Redmi, POCO (MIUI, HyperOS) | Yes | Also *No restrictions* and *Autostart*, or HyperOS freezes Feedcut after a few minutes. Tested on a Xiaomi 17. |
+| OPPO, realme, OnePlus, vivo, iQOO, Huawei, Honor | Should work | These systems have one more background switch. Feedcut shows it as a setup step with a link to the steps for your phone. Not tested. |
+
+**Why it works on so many phones.** Feedcut uses only the standard accessibility API that has been in Android for years: it reads view ids and presses Back or Home. It needs no root, no Google services and no internet connection, so it also runs on phones without Google (custom ROMs, Huawei with apps from other stores). Most failures on a given phone come from the phone maker's battery manager stopping the service, which is why setup asks for the battery settings.
+
+### It will not work
+
+- **Instagram Lite and Facebook Lite.** They draw their own screens without view ids, so there is nothing to recognise.
+- **Facebook in a language where the tab is not called "Marketplace".** `allowTabs` matches the label before the first comma ("Marketplace, tab 4 of 6"). In most languages, including English and Hungarian, it is "Marketplace". If yours differs, add your label to `allowTabs` in the rules file.
+- **In a browser.** facebook.com, instagram.com and youtube.com work as usual.
+- **With Advanced Protection on** (from Android 17). It turns off accessibility services that are not accessibility tools. Feedcut is not one and does not claim to be.
+- **After an app update that renames a screen.** The main screen warns when this may have happened. See [When a rule stops working](#when-a-rule-stops-working).
+- **TikTok** is not confirmed on a device yet.
+
+### Installing outside a store
+
+- **Android 13 and later** hide the accessibility switch for apps installed from a file until you allow restricted settings. Setup step 2 shows how.
+- **Some countries block the install.** Where Play Protect's enhanced fraud protection is on (for example Singapore, India, Brazil, Thailand, Vietnam, Malaysia), Android refuses apps that ask for accessibility when they come from a browser, chat app or file manager. Installing through an app store client avoids this. Feedcut is being submitted to IzzyOnDroid and F-Droid.
+- **Developer verification.** Since September 2026, phones in Brazil, Indonesia, Singapore and Thailand only install apps from verified developers, unless you turn on Android's one-time *advanced flow* (it has a one-day wait). Other countries follow from 2027. Feedcut's developer is not verified yet.
+- **It is an accessibility service, not a lock.** You can switch it off in a few taps. It helps against habit, not against determination. Feedcut never acts on itself, Settings or the system screens, so a rule cannot lock you out.
 
 ## Privacy
 

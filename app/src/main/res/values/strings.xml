@@ -27,12 +27,18 @@
     <string name="setup_progress">Setup %1$d of %2$d</string>
     <string name="step_access">Turn Feedcut on in Accessibility</string>
     <string name="step_access_off">Greyed out? Open App settings, tap the three dots, then Allow restricted settings.</string>
+    <string name="step_access_off_old">Find Feedcut in the list, usually under Downloaded services, and switch it on.</string>
     <string name="step_access_stuck">Android stopped it. Switch Feedcut off and on again.</string>
     <string name="step_battery">Battery: Unrestricted</string>
     <string name="step_battery_todo">Without it, the phone stops Feedcut after a few minutes and the feeds come back.</string>
     <string name="step_battery_xiaomi">Xiaomi: Battery saver, No restrictions. Without it HyperOS freezes Feedcut after a few minutes.</string>
     <string name="step_autostart">Autostart on (Xiaomi)</string>
     <string name="step_autostart_detail">Feedcut cannot check this one. Turn it on once.</string>
+    <string name="step_vendor">Allow background running</string>
+    <string name="step_vendor_huawei">Huawei, Honor: Battery, App launch. Set Feedcut to Manage manually with all three switches on. Feedcut cannot check this one.</string>
+    <string name="step_vendor_oppo">OPPO, realme, OnePlus: App settings, Battery. Allow background activity and auto launch. Feedcut cannot check this one.</string>
+    <string name="step_vendor_vivo">vivo, iQOO: Battery, allow high background power use, and turn on Autostart. Feedcut cannot check this one.</string>
+    <string name="open_guide">Steps for your phone</string>
     <string name="open_access">Accessibility</string>
     <string name="open_settings">App settings</string>
     <string name="open_battery">Battery settings</string>
@@ -75,5 +81,6 @@
     <string name="err_no_apps">The apps list is missing.</string>
     <string name="err_not_object">apps[%1$d] is not an object.</string>
     <string name="err_package">Bad package name at apps[%1$d].</string>
+    <string name="err_protected">Feedcut never blocks %1$s. You must always be able to switch Feedcut off.</string>
     <string name="err_action">The action must be back or home (%1$s).</string>
 </resources>

@@ -37,6 +37,18 @@ data class RuleSet(
     val version: Int = 0,
 )
 
+/**
+ * Feedcut never acts on these, whatever the rules file says: itself, Settings, the system UI
+ * and the package installer. The user must always be able to switch Feedcut off or uninstall it.
+ */
+val PROTECTED_PACKAGES = setOf(
+    BuildConfig.APPLICATION_ID,
+    "com.android.settings",
+    "com.android.systemui",
+    "com.android.packageinstaller",
+    "com.google.android.packageinstaller",
+)
+
 fun activeHints(rule: AppRule): List<String> =
     if (!rule.enabled) emptyList() else rule.hints.map { it.trim() }.filter { it.isNotEmpty() }
 

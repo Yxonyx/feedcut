@@ -21,7 +21,7 @@ class GateService : AccessibilityService() {
     private var rules: List<AppRule> = emptyList()
 
     private val handler = Handler(Looper.getMainLooper())
-    private val timer = CheckTimer(SETTLE_MS, DEBOUNCE_MS)
+    private val timer = CheckTimer(SETTLE_MS, DEBOUNCE_MS, FOLLOW_UP_MS, FOLLOW_UPS)
     private var pendingPackage: String? = null
     private var lastActPackage: String? = null
     private var lastActAt = 0L
@@ -39,6 +39,11 @@ class GateService : AccessibilityService() {
                 redirectTabs(rule)
             } else if (blocksWholeApp(rule) || seesHint(rule)) {
                 act(rule)
+            } else {
+                timer.foundNothing()?.let { delay ->
+                    pendingPackage = target
+                    handler.postDelayed(check, delay)
+                }
             }
         } catch (e: RuntimeException) {
             Log.w(TAG, "check failed", e)
@@ -62,6 +67,7 @@ class GateService : AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event == null) return
         val packageName = event.packageName?.toString() ?: return
+        if (packageName in PROTECTED_PACKAGES) return
         val rule = currentRules().firstOrNull { it.packageName == packageName } ?: return
         val hints = activeHints(rule)
         val tabsOnly = rule.enabled && rule.allowTabs.isNotEmpty()
@@ -132,9 +138,10 @@ class GateService : AccessibilityService() {
     private fun applyPackages() {
         val info = serviceInfo ?: return
         val watched = currentRules()
-            .filter { it.enabled }
+            .filter { it.enabled && it.packageName !in PROTECTED_PACKAGES }
             .map { it.packageName }
             .toMutableSet()
+        // Never empty: an empty list would mean every app.
         watched.add(packageName)
         info.packageNames = watched.toTypedArray()
         serviceInfo = info
@@ -236,6 +243,8 @@ class GateService : AccessibilityService() {
         const val TAG = "Feedcut"
         const val DEBOUNCE_MS = 800L
         const val SETTLE_MS = 120L
+        const val FOLLOW_UP_MS = 400L
+        const val FOLLOW_UPS = 2
         const val RULES_CHECK_MS = 3000L
         const val ESCALATE_MS = 2500L
         const val MAX_NODES = 800

@@ -6,6 +6,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
+import androidx.annotation.StringRes
 import androidx.core.net.toUri
 
 /**
@@ -15,6 +16,19 @@ import androidx.core.net.toUri
 object DeviceHelp {
     val isXiaomi: Boolean
         get() = Build.MANUFACTURER.lowercase() in setOf("xiaomi", "redmi", "poco")
+
+    /**
+     * Makers that stop background apps beyond Android's battery setting, with a switch of
+     * their own that Feedcut cannot check (see dontkillmyapp.com). Null for everyone else.
+     */
+    @get:StringRes
+    val vendorStep: Int?
+        get() = when (Build.MANUFACTURER.lowercase()) {
+            "huawei", "honor" -> R.string.step_vendor_huawei
+            "oppo", "realme", "oneplus" -> R.string.step_vendor_oppo
+            "vivo", "iqoo" -> R.string.step_vendor_vivo
+            else -> null
+        }
 
     fun openAppSettings(activity: Activity) {
         val intent = Intent(
