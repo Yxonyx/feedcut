@@ -40,6 +40,10 @@ object GateStatus {
     /** Tells the running service to reload the rules file now. */
     fun ping(context: Context) {
         if (!isEnabled(context)) return
-        context.startService(Intent(context, GateService::class.java))
+        // The service also rereads the file every few seconds, so a refused start only costs time.
+        try {
+            context.startService(Intent(context, GateService::class.java))
+        } catch (_: IllegalStateException) {
+        }
     }
 }

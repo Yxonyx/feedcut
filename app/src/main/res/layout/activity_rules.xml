@@ -3,19 +3,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingHorizontal="20dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:accessibilityHeading="true"
+        android:text="@string/edit_json"
+        android:textAppearance="@style/TextAppearance.Feedcut.Wordmark" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/rules_editor_help"
+        android:textAppearance="@style/TextAppearance.Feedcut.Small" />
 
     <EditText
         android:id="@+id/editor"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="14dp"
         android:layout_weight="1"
+        android:background="@drawable/editor_box"
         android:fontFamily="monospace"
-        android:gravity="top"
+        android:gravity="top|start"
         android:hint="@string/edit_json"
         android:importantForAutofill="no"
-        android:inputType="textMultiLine"
-        android:scrollbars="vertical" />
+        android:inputType="textMultiLine|textNoSuggestions"
+        android:padding="12dp"
+        android:scrollbars="vertical"
+        android:textColor="@color/c_ink"
+        android:textColorHint="@color/c_muted"
+        android:textSize="13sp" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/save"

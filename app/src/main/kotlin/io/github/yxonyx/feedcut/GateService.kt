@@ -37,7 +37,7 @@ class GateService : AccessibilityService() {
             val rule = currentRules().firstOrNull { it.packageName == target } ?: return@Runnable
             if (rule.allowTabs.isNotEmpty()) {
                 redirectTabs(rule)
-            } else if (seesHint(rule)) {
+            } else if (blocksWholeApp(rule) || seesHint(rule)) {
                 act(rule)
             }
         } catch (e: RuntimeException) {
@@ -54,6 +54,8 @@ class GateService : AccessibilityService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         rulesCheckedAt = -RULES_CHECK_MS
         applyPackages()
+        // Only the system's binding should keep the service alive, not this ping.
+        stopSelf(startId)
         return START_NOT_STICKY
     }
 
@@ -65,10 +67,8 @@ class GateService : AccessibilityService() {
         val tabsOnly = rule.enabled && rule.allowTabs.isNotEmpty()
         if (hints.isEmpty() && !tabsOnly) return
         val windowJustChanged = event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
-        if (hints.any { it == "*" }) {
-            if (chooseAction(rule, windowJustChanged, emptyList()) != null) act(rule)
-            return
-        }
+        // A whole-app rule only cares about the app opening, not about what it draws.
+        if (hints.any { it == "*" } && chooseAction(rule, windowJustChanged, emptyList()) == null) return
         pendingPackage = packageName
         timer.onEvent(windowJustChanged)?.let { delay ->
             handler.removeCallbacks(check)
@@ -88,11 +88,15 @@ class GateService : AccessibilityService() {
         val now = SystemClock.elapsedRealtime()
         if (!timer.canAct(now)) return
         val sameAppJustNow = rule.packageName == lastActPackage && now - lastActAt < ESCALATE_MS
-        val performed = tab?.performAction(AccessibilityNodeInfo.ACTION_CLICK) == true ||
+        // A tab rule only ever taps the tab: Back or Home would throw the user out of the app.
+        val performed = if (tab != null) {
+            tab.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        } else {
             when (escalate(actionOf(rule), sameAppJustNow)) {
                 GateAction.BACK -> performGlobalAction(GLOBAL_ACTION_BACK)
                 GateAction.HOME -> performGlobalAction(GLOBAL_ACTION_HOME)
             }
+        }
         if (performed) {
             timer.acted(now)
             lastActPackage = rule.packageName
@@ -116,7 +120,9 @@ class GateService : AccessibilityService() {
         val target = RuleStore.file(this)
         val modified = if (target.exists()) target.lastModified() else 0L
         if (modified != rulesAt) {
-            rules = RuleStore.readQuiet(this).apps
+            // On a failed read keep the last good rules and try again on the next check.
+            val read = RuleStore.readQuiet(this) ?: return rules
+            rules = read.apps
             rulesAt = modified
             applyPackages()
         }
@@ -132,6 +138,17 @@ class GateService : AccessibilityService() {
         watched.add(packageName)
         info.packageNames = watched.toTypedArray()
         serviceInfo = info
+    }
+
+    /** A "*" rule, and the app is still the one on screen once the debounce is over. */
+    private fun blocksWholeApp(rule: AppRule): Boolean {
+        if (activeHints(rule).none { it == "*" }) return false
+        val root = rootInActiveWindow ?: return false
+        try {
+            return root.packageName?.toString() == rule.packageName
+        } finally {
+            root.recycle()
+        }
     }
 
     private fun seesHint(rule: AppRule): Boolean {

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Only to see whether a rule's app is installed. Feedcut does not ask for the full app list. -->
+    <!-- To show whether a rule's app is installed. This makes apps with a launcher icon visible
+         to Feedcut, since users can add rules for any app; it is not QUERY_ALL_PACKAGES. -->
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />

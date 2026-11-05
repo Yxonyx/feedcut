@@ -37,7 +37,10 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // R8 drops the unused parts of AppCompat and Material: about a quarter of the size.
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
             signingConfig = signingConfigs.findByName("release")
         }
     }
@@ -46,6 +49,10 @@ android {
     dependenciesInfo {
         includeInApk = false
         includeInBundle = false
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     compileOptions {

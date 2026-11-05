@@ -187,21 +187,27 @@ class MainActivity : AppCompatActivity() {
             !rule.enabled -> getString(R.string.detail_off)
             health == RuleHealth.APP_UPDATED -> getString(R.string.health_updated)
             health == RuleHealth.NEVER_BLOCKED -> getString(R.string.health_never)
-            else -> getString(
-                R.string.health_last,
-                DateUtils.getRelativeTimeSpanString(BlockLog.lastAt(this, rule.packageName) ?: 0L),
-            )
+            else -> lastCut(BlockLog.lastAt(this, rule.packageName) ?: 0L)
         }
         return if (rule.note.isEmpty()) state else "${rule.note} · $state"
+    }
+
+    /** "last cut 5 minutes ago", but "last cut just now" instead of "0 minutes ago". */
+    private fun lastCut(at: Long): String {
+        val now = System.currentTimeMillis()
+        if (now - at < DateUtils.MINUTE_IN_MILLIS) return getString(R.string.health_just_now)
+        return getString(
+            R.string.health_last,
+            DateUtils.getRelativeTimeSpanString(at, now, DateUtils.MINUTE_IN_MILLIS),
+        )
     }
 
     private fun update(index: Int, change: (AppRule) -> AppRule) {
         val apps = shown.apps.toMutableList()
         if (index !in apps.indices) return
         apps[index] = change(apps[index])
-        shown = shown.copy(apps = apps)
-        RuleStore.write(this, shown)
-        GateStatus.ping(this)
+        val next = shown.copy(apps = apps)
+        if (saveRules { RuleStore.write(this, next) }) shown = next
         renderApps()
         renderStatus()
     }

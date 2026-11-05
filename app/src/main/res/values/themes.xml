@@ -21,6 +21,43 @@
         <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="27">always</item>
         <item name="materialButtonStyle">@style/Widget.Feedcut.Button</item>
         <item name="materialButtonOutlinedStyle">@style/Widget.Feedcut.Button.Outlined</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Feedcut.Dialog</item>
+    </style>
+
+    <!-- Dialogs are cut boards too, and their buttons use the label face. -->
+    <style name="ThemeOverlay.Feedcut.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="shapeAppearanceCornerExtraLarge">@style/Shape.Feedcut.Blaze</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.Feedcut.DialogButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.Feedcut.DialogButton</item>
+    </style>
+
+    <!-- Ink, not red: red text on the dialog surface is under 4.5:1 in the dark scheme. -->
+    <style name="Widget.Feedcut.DialogButton" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textAppearance">@style/TextAppearance.Feedcut.ButtonLabel</item>
+        <item name="android:textColor">@color/c_ink</item>
+        <item name="shapeAppearance">@style/Shape.Feedcut.Blaze</item>
+    </style>
+
+    <!-- Back or Home: one segment painted in ink, the other bare. -->
+    <style name="Widget.Feedcut.Toggle" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textAppearance">@style/TextAppearance.Feedcut.ButtonLabel</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:minWidth">72dp</item>
+        <item name="android:textColor">@color/toggle_text</item>
+        <item name="backgroundTint">@color/toggle_bg</item>
+        <item name="strokeColor">@color/c_muted</item>
+        <item name="shapeAppearance">@style/Shape.Feedcut.Blaze</item>
+    </style>
+
+    <style name="Widget.Feedcut.Field" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">3dp</item>
+        <item name="boxCornerRadiusTopEnd">3dp</item>
+        <item name="boxCornerRadiusBottomStart">3dp</item>
+        <item name="boxCornerRadiusBottomEnd">3dp</item>
+        <item name="boxStrokeColor">@color/field_stroke</item>
+        <item name="hintTextColor">@color/c_ink</item>
+        <item name="android:textColorHint">@color/c_muted</item>
+        <item name="cursorColor">@color/c_ink</item>
     </style>
 
     <style name="Widget.Feedcut.Button" parent="Widget.Material3.Button">

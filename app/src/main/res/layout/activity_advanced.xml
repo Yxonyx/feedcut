@@ -22,7 +22,16 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="28dp"
+            android:accessibilityHeading="true"
+            android:text="@string/markers_title"
+            android:textAppearance="@style/TextAppearance.Feedcut.Section" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="14dp"
             android:text="@string/hints_help"
             android:textAppearance="@style/TextAppearance.Feedcut.Small" />
 
@@ -32,12 +41,32 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/c_line" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:accessibilityHeading="true"
+            android:text="@string/edit_json"
+            android:textAppearance="@style/TextAppearance.Feedcut.Section" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/rules_file_help"
+            android:textAppearance="@style/TextAppearance.Feedcut.Small" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/edit_json"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="12dp"
             android:text="@string/edit_json" />
 
         <com.google.android.material.button.MaterialButton
@@ -45,23 +74,46 @@
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:text="@string/reset_rules" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:accessibilityHeading="true"
+            android:text="@string/phone_title"
+            android:textAppearance="@style/TextAppearance.Feedcut.Section" />
 
         <TextView
             android:id="@+id/xiaomi_note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="8dp"
             android:text="@string/battery_hint_xiaomi"
-            android:textAppearance="@style/TextAppearance.Feedcut.Small"
+            android:textAppearance="@style/TextAppearance.Feedcut.Body"
             android:visibility="gone" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/dontkill_help"
+            android:textAppearance="@style/TextAppearance.Feedcut.Small" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/open_dontkill"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="wrap_content"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:text="@string/open_dontkill" />
+
+        <TextView
+            android:id="@+id/version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:textAppearance="@style/TextAppearance.Feedcut.Small" />
     </LinearLayout>
 </ScrollView>

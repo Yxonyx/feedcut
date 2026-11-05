@@ -126,6 +126,14 @@ class RulesTest {
     }
 
     @Test
+    fun ownRuleForANewDefaultAppStaysTheUsers() {
+        val own = AppRule("com.example.feed", "My feed", true, "home", listOf("my_feed"))
+        val newDefault = AppRule("com.example.feed", "Feed", true, "back", listOf("feed_pager"), note = "Feed")
+        val merged = mergeRules(RuleSet(listOf(ig), 1), RuleSet(listOf(ig, own), 1), RuleSet(listOf(ig, newDefault), 2))
+        assertEquals(own, merged.apps.single { it.packageName == "com.example.feed" })
+    }
+
+    @Test
     fun oldInstallWithoutBaseGetsNewHintsKeepsActionAndSwitch() {
         val user = RuleSet(listOf(ig.copy(enabled = false, action = "home")), 0)
         val bundled = RuleSet(listOf(ig.copy(hints = listOf("clips_tab"))), 2)

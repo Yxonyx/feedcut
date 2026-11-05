@@ -1,6 +1,7 @@
 package io.github.yxonyx.feedcut
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,6 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputLayout
 
 /** Screen markers, the Back/Home choice, the raw rules file. Kept off the main screen. */
 class AdvancedActivity : AppCompatActivity() {
@@ -38,8 +40,7 @@ class AdvancedActivity : AppCompatActivity() {
                 .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(R.string.reset_rules) { _, _ ->
                     flushHints()
-                    RuleStore.reset(this)
-                    GateStatus.ping(this)
+                    saveRules { RuleStore.reset(this) }
                     render()
                 }
                 .show()
@@ -79,8 +80,19 @@ class AdvancedActivity : AppCompatActivity() {
             val row = inflater.inflate(R.layout.item_rule_edit, list, false)
             row.findViewById<TextView>(R.id.label).text = rule.label
             row.findViewById<TextView>(R.id.pkg).text = rule.packageName
-            row.findViewById<View>(R.id.health).visibility = View.GONE
-            row.findViewById<View>(R.id.enabled).visibility = View.GONE
+            // The label of the field stays in the body face; only the ids are monospace.
+            row.findViewById<TextInputLayout>(R.id.hints_box).typeface = Typeface.DEFAULT
+            if (rule.allowTabs.isNotEmpty()) {
+                // A tab rule only taps a tab, so Back/Home and markers do not apply.
+                row.findViewById<View>(R.id.action).visibility = View.GONE
+                row.findViewById<View>(R.id.hints_box).visibility = View.GONE
+                row.findViewById<TextView>(R.id.tabs).apply {
+                    visibility = View.VISIBLE
+                    text = getString(R.string.tabs_rule, rule.allowTabs.joinToString(", "))
+                }
+                list.addView(row)
+                return@forEachIndexed
+            }
             val group = row.findViewById<MaterialButtonToggleGroup>(R.id.action)
             group.check(if (rule.action == "home") R.id.action_home else R.id.action_back)
             group.addOnButtonCheckedListener { _, checkedId, isChecked ->
@@ -96,7 +108,7 @@ class AdvancedActivity : AppCompatActivity() {
                 override fun afterTextChanged(s: Editable?) {
                     if (writing) return
                     val parts = s?.toString().orEmpty()
-                        .split(',')
+                        .split(',', '\n')
                         .map { it.trim() }
                         .filter { it.isNotEmpty() }
                     pendingHints.remove(index)?.let(saver::removeCallbacks)
@@ -110,6 +122,8 @@ class AdvancedActivity : AppCompatActivity() {
             })
             list.addView(row)
         }
+        findViewById<TextView>(R.id.version).text =
+            getString(R.string.version_line, BuildConfig.VERSION_NAME, shown.version)
         writing = false
     }
 
@@ -117,9 +131,8 @@ class AdvancedActivity : AppCompatActivity() {
         val apps = shown.apps.toMutableList()
         if (index !in apps.indices) return
         apps[index] = change(apps[index])
-        shown = shown.copy(apps = apps)
-        RuleStore.write(this, shown)
-        GateStatus.ping(this)
+        val next = shown.copy(apps = apps)
+        if (saveRules { RuleStore.write(this, next) }) shown = next
     }
 
     private companion object {

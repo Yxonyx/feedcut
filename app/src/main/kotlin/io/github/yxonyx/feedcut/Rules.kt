@@ -109,6 +109,11 @@ fun mergeRules(base: RuleSet?, user: RuleSet, bundled: RuleSet): RuleSet {
             if (old == null) merged.add(fresh)
             continue
         }
+        if (base != null && old == null) {
+            // The user wrote this rule before it became a default. It stays theirs.
+            merged.add(mine)
+            continue
+        }
         fun <T> pick(field: (AppRule) -> T, keepWithoutBase: Boolean): T = when {
             old == null -> if (keepWithoutBase) field(mine) else field(fresh)
             field(mine) != field(old) -> field(mine)

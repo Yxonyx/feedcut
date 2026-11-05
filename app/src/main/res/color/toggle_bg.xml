@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The chosen action is painted in ink; the other stays bare stone. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/c_ink" android:state_checked="true" />
+    <item android:color="@android:color/transparent" />
+</selector>

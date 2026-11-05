@@ -1,6 +1,7 @@
 package io.github.yxonyx.feedcut
 
 import android.content.Context
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.core.util.AtomicFile
 import org.json.JSONArray
@@ -27,8 +28,11 @@ object RuleStore {
         val bundled = parse(assetText(context))
         if (bundled.version <= user.version) return user
         // The app was updated and brought newer default rules.
+        // The base only counts if it is the defaults this file was last merged from. A crash
+        // between the two saves below leaves them on different versions.
         val base = try {
             baseFile(context).takeIf { it.exists() }?.let { parse(load(it)) }
+                ?.takeIf { it.version == user.version }
         } catch (_: IllegalArgumentException) {
             null
         }
@@ -45,12 +49,17 @@ object RuleStore {
         recover(context)
         onRecovered()
         read(context)
+    } catch (_: IOException) {
+        // Usually a full disk. Show the defaults rather than nothing; the service keeps its copy.
+        parse(assetText(context))
     }
 
-    fun readQuiet(context: Context): RuleSet = try {
+    /** For the service: null when the file cannot be read right now. */
+    fun readQuiet(context: Context): RuleSet? = try {
         read(context)
-    } catch (_: Exception) {
-        RuleSet(emptyList())
+    } catch (e: Exception) {
+        Log.w("Feedcut", "rules file not readable", e)
+        null
     }
 
     fun writeRaw(context: Context, raw: String) {

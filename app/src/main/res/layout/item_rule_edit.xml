@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
     android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/c_line" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -22,56 +28,72 @@
                 android:id="@+id/label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18sp" />
+                android:textAppearance="@style/TextAppearance.Feedcut.Body"
+                tools:text="Instagram" />
 
             <TextView
                 android:id="@+id/pkg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/health"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:visibility="gone" />
+                android:layout_marginTop="2dp"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.Feedcut.Small"
+                tools:text="com.instagram.android" />
         </LinearLayout>
 
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/enabled"
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/action"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:contentDescription="@string/action_title"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/action_back"
+                style="@style/Widget.Feedcut.Toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/action_back" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/action_home"
+                style="@style/Widget.Feedcut.Toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/action_home" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
     </LinearLayout>
 
-    <com.google.android.material.button.MaterialButtonToggleGroup
-        android:id="@+id/action"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:selectionRequired="true"
-        app:singleSelection="true">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/action_back"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/action_back" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/action_home"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/action_home" />
-    </com.google.android.material.button.MaterialButtonToggleGroup>
-
-    <EditText
-        android:id="@+id/hints"
+    <TextView
+        android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        android:hint="@string/hints_help" />
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:textAppearance="@style/TextAppearance.Feedcut.Small"
+        android:visibility="gone"
+        tools:text="Keeps the tab Marketplace. Change it in the rules file." />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/hints_box"
+        style="@style/Widget.Feedcut.Field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="16dp"
+        android:hint="@string/hints_label">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/hints"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:importantForAutofill="no"
+            android:inputType="textNoSuggestions|textMultiLine"
+            android:textSize="14sp"
+            tools:text="clips_viewer, clips_swipe_refresh" />
+    </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>
