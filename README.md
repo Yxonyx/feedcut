@@ -15,12 +15,14 @@ and keeps Facebook to Marketplace and Groups. It has no internet permission.
 </p>
 
 <p align="center">
-<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1_main_light.png" width="250" alt="Main screen, light: on, 3 feeds cut today, the last 7 days">
+<img src="docs/demo.gif" width="250" alt="Demo: a normal YouTube video plays; opening a Short goes straight back to the video, and the counter goes from 4 to 5">
 &nbsp;
-<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2_main_dark.png" width="250" alt="Main screen, dark">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1_main_light.png" width="250" alt="Main screen, light: on, 3 feeds cut today, the last 7 days">
 &nbsp;
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3_advanced_dark.png" width="250" alt="Advanced: Back or Home and screen markers per app">
 </p>
+
+<p align="center"><sub>Recorded on the Android 16 emulator. Video in the demo: <i>Big Buck Bunny</i>, © Blender Foundation, CC BY 3.0.</sub></p>
 
 | App | What Feedcut does |
 | --- | --- |
