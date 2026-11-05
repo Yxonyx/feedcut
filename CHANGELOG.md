@@ -2,6 +2,11 @@
 
 All notable changes to Feedcut. Versions follow [Semantic Versioning](https://semver.org); the rules file has its own `version` number, listed with each release.
 
+## Unreleased
+
+### Changed
+- License: Apache-2.0 instead of GPL-3.0. Version 1.1.0 stays available under GPL-3.0.
+
 ## 1.1.0 (versionCode 2), rules version 4
 
 First public release.

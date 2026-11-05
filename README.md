@@ -10,7 +10,7 @@ and keeps Facebook to Marketplace and Groups. It has no internet permission.
 <p align="center">
 <a href="../../releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/Yxonyx/feedcut?label=release"></a>
 <a href="../../actions/workflows/build.yml"><img alt="Build" src="https://github.com/Yxonyx/feedcut/actions/workflows/build.yml/badge.svg"></a>
-<a href="LICENSE"><img alt="License: GPL-3.0" src="https://img.shields.io/badge/license-GPL--3.0-blue"></a>
+<a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
 <img alt="Android 8.0+" src="https://img.shields.io/badge/Android-8.0%2B-3DDC84">
 </p>
 
@@ -147,4 +147,4 @@ Rule fixes are the most useful contribution: see [CONTRIBUTING.md](CONTRIBUTING.
 
 ## License
 
-[GPL-3.0](LICENSE). You may use, change and share Feedcut, and versions you share must stay open under the same license.
+[Apache-2.0](LICENSE). You may use, change and share Feedcut, also inside your own apps, as long as you keep the license and say what you changed.
