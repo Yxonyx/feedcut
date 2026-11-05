@@ -130,6 +130,10 @@ object RuleStore {
             if (action != "back" && action != "home") {
                 throw RuleError(R.string.err_action, packageName)
             }
+            val dailyMinutes = item.optInt("dailyMinutes", 0)
+            if (dailyMinutes !in 0..MAX_DAILY_MINUTES) {
+                throw RuleError(R.string.err_limit, packageName)
+            }
             apps.add(
                 AppRule(
                     packageName = packageName,
@@ -139,6 +143,7 @@ object RuleStore {
                     hints = strings(item.optJSONArray("hints")),
                     allowTabs = strings(item.optJSONArray("allowTabs")),
                     note = item.optString("note").trim(),
+                    dailyMinutes = dailyMinutes,
                 )
             )
         }
@@ -170,6 +175,7 @@ object RuleStore {
                 item.put("allowTabs", JSONArray(rule.allowTabs))
             }
             if (rule.note.isNotEmpty()) item.put("note", rule.note)
+            if (rule.dailyMinutes > 0) item.put("dailyMinutes", rule.dailyMinutes)
             apps.put(item)
         }
         return JSONObject().put("version", rules.version).put("apps", apps).toString(2) + "\n"

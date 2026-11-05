@@ -12,7 +12,7 @@ Adults who choose to limit their own short-video and feed scrolling. They instal
 
 ## Product Purpose
 
-Feedcut closes Instagram Reels, YouTube Shorts and TikTok the moment they open, and keeps Facebook on Marketplace and Groups by switching every other tab to Marketplace. Success: the user keeps the useful parts of these apps and stops losing time to the feeds, without having to think about it.
+Feedcut closes Instagram Reels, YouTube Shorts and TikTok the moment they open, or after a daily limit the user sets, and keeps Facebook on Marketplace and Groups by switching every other tab to Marketplace. Success: the user keeps the useful parts of these apps and stops losing time to the feeds, without having to think about it.
 
 ## Positioning
 
@@ -28,7 +28,7 @@ The only blocker in its open-source neighbourhood that keeps Facebook useful (Ma
 
 - Native Android, Kotlin, XML views and Material Components. No Compose. minSdk 26, targetSdk 36.
 - No `INTERNET` permission, no analytics, no account. Everything stays on the phone; backup is off.
-- Data on hand: screens closed per day for the last 31 days, per-app last block time and the app's version at that time. No all-time total yet.
+- Data on hand: screens closed per day for the last 31 days, per-app last block time and the app's version at that time, and today's time per app on screens with a limit. No all-time total yet.
 - Time saved cannot be measured. Any "time saved" figure is an estimate from closed screens and must show its assumption.
 - English only. The app name is Feedcut; package `io.github.yxonyx.feedcut`.
 

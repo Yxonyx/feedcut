@@ -53,4 +53,23 @@ class RuleStoreTest {
             }
         }
     }
+
+    @Test
+    fun dailyLimitIsReadAndKept() {
+        val raw = """{"apps":[{"package":"a.b","hints":["x"],"dailyMinutes":20}]}"""
+        val rules = RuleStore.parse(raw)
+        assertEquals(20, rules.apps.single().dailyMinutes)
+        assertEquals(rules, RuleStore.parse(RuleStore.toJson(rules)))
+        assertEquals(0, RuleStore.parse("""{"apps":[{"package":"a.b"}]}""").apps.single().dailyMinutes)
+    }
+
+    @Test
+    fun badDailyLimitIsRejected() {
+        for (minutes in listOf(-1, 1441)) {
+            val e = assertThrows(RuleError::class.java) {
+                RuleStore.parse("""{"apps":[{"package":"a.b","dailyMinutes":$minutes}]}""")
+            }
+            assertEquals(R.string.err_limit, e.res)
+        }
+    }
 }

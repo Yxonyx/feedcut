@@ -51,6 +51,13 @@
     <string name="health_updated">Updated since the last cut. The rule may be broken.</string>
     <string name="not_installed">Not installed</string>
 
+    <string name="limit_none">Cut at once. Tap to set a daily limit.</string>
+    <string name="limit_used">%1$d of %2$d min used today</string>
+    <string name="limit_title">Daily limit: %1$s</string>
+    <string name="limit_at_once">Cut at once</string>
+    <string name="limit_minutes">%1$d min</string>
+    <string name="limit_warning">%1$s: 1 minute left today.</string>
+
     <string name="advanced_row">Advanced: screen markers and rules file</string>
     <string name="advanced_title">Advanced</string>
     <string name="lead">No internet permission. Your rules and counts stay on this phone.</string>
@@ -82,5 +89,6 @@
     <string name="err_not_object">apps[%1$d] is not an object.</string>
     <string name="err_package">Bad package name at apps[%1$d].</string>
     <string name="err_protected">Feedcut never blocks %1$s. You must always be able to switch Feedcut off.</string>
+    <string name="err_limit">The daily limit must be 0 to 1440 minutes (%1$s).</string>
     <string name="err_action">The action must be back or home (%1$s).</string>
 </resources>

@@ -158,4 +158,31 @@ class RulesTest {
         assertEquals(GateAction.HOME, escalate(GateAction.BACK, sameAppJustNow = true))
         assertEquals(GateAction.HOME, escalate(GateAction.HOME, sameAppJustNow = false))
     }
+
+    @Test
+    fun dailyLimitSurvivesUpdate() {
+        val ig = rule().copy(dailyMinutes = 0)
+        val mine = ig.copy(dailyMinutes = 20)
+        val merged = mergeRules(RuleSet(listOf(ig), 1), RuleSet(listOf(mine), 1), RuleSet(listOf(ig), 2))
+        assertEquals(20, merged.apps.single().dailyMinutes)
+        assertEquals(20, mergeRules(null, RuleSet(listOf(mine), 1), RuleSet(listOf(ig), 2)).apps.single().dailyMinutes)
+    }
+
+    @Test
+    fun limitWarnsOnceWhenTheLastMinuteStarts() {
+        val limit = 10 * 60_000L
+        assertEquals(false, limitWarns(limit, limit - 90_000, limit - 89_000))
+        assertEquals(true, limitWarns(limit, limit - 60_500, limit - 59_500))
+        assertEquals(false, limitWarns(limit, limit - 59_500, limit - 58_500))
+    }
+
+    @Test
+    fun aOneMinuteLimitHasNoWarning() {
+        assertEquals(false, limitWarns(60_000, 0, 1_000))
+    }
+
+    @Test
+    fun limitIsInMilliseconds() {
+        assertEquals(1_200_000L, limitMs(rule().copy(dailyMinutes = 20)))
+    }
 }

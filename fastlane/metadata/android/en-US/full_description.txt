@@ -4,6 +4,8 @@
 
 <p><b>How it works.</b> Feedcut is an accessibility service. When an app you switched on shows a short-video screen, Feedcut presses Back or Home. On Facebook it taps the Marketplace tab whenever another tab opens. It recognises screens by their view ids. It does not read your messages, your posts, or what is on screen, except the labels of Facebook's bottom tab bar.</p>
 
+<p><b>Daily limits.</b> Do not want to lose a feed completely? Give an app 5 to 60 minutes a day. Feedcut warns you when one minute is left, then closes the screen until midnight.</p>
+
 <p><b>Private by design.</b></p>
 <ul>
 <li>No internet permission. Feedcut cannot send anything anywhere.</li>

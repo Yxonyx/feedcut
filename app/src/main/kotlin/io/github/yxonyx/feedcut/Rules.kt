@@ -23,6 +23,8 @@ data class AppRule(
     val allowTabs: List<String> = emptyList(),
     /** What the rule removes, in a few words for the main screen ("Reels", "Only Marketplace"). */
     val note: String = "",
+    /** Minutes a day the screen may stay open before it is cut. 0: cut it at once. */
+    val dailyMinutes: Int = 0,
 )
 
 /** A tab from the bottom bar: only the first part of its label ("Marketplace") and whether it is selected. */
@@ -86,6 +88,12 @@ fun chooseAction(
     return if (hit) actionOf(rule) else null
 }
 
+fun limitMs(rule: AppRule): Long = rule.dailyMinutes * MS_PER_MINUTE
+
+/** True on the step that starts the last minute, so the warning shows once a day. */
+fun limitWarns(limit: Long, usedBefore: Long, usedNow: Long): Boolean =
+    limit - usedBefore > MS_PER_MINUTE && limit - usedNow <= MS_PER_MINUTE
+
 fun tabLabel(contentDescription: CharSequence?): String =
     contentDescription?.toString()?.substringBefore(',')?.trim().orEmpty()
 
@@ -107,7 +115,7 @@ fun tabRedirect(allow: List<String>, tabs: List<SeenTab>): Int? {
  * base is the default state the user's file started from. Where the user changed
  * a field, the user's value stays; elsewhere the new default wins.
  * Without a base (old installs) the switch and the action stay and the hints update.
- * enabled always stays the user's.
+ * enabled and dailyMinutes always stay the user's.
  */
 fun mergeRules(base: RuleSet?, user: RuleSet, bundled: RuleSet): RuleSet {
     val userByPkg = user.apps.associateBy { it.packageName }
@@ -140,6 +148,7 @@ fun mergeRules(base: RuleSet?, user: RuleSet, bundled: RuleSet): RuleSet {
                 hints = pick(AppRule::hints, keepWithoutBase = false),
                 allowTabs = pick(AppRule::allowTabs, keepWithoutBase = false),
                 note = pick(AppRule::note, keepWithoutBase = false),
+                dailyMinutes = mine.dailyMinutes,
             )
         )
     }
@@ -184,5 +193,8 @@ fun gateState(enabled: Boolean, running: Boolean): GateState = when {
  * have scrolled, so every figure built on this is shown as an estimate with this number.
  */
 const val MINUTES_PER_CUT = 1
+
+const val MS_PER_MINUTE = 60_000L
+const val MAX_DAILY_MINUTES = 24 * 60
 
 fun minutesKept(cuts: Int): Int = cuts * MINUTES_PER_CUT

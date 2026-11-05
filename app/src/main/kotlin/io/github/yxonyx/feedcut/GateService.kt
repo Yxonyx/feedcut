@@ -2,12 +2,20 @@ package io.github.yxonyx.feedcut
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Intent
+import android.graphics.PixelFormat
 import android.os.Handler
 import android.os.Looper
+import android.os.PowerManager
 import android.os.SystemClock
 import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.FrameLayout
+import android.widget.TextView
 
 /**
  * Watches only the packages enabled in the rules file.
@@ -22,6 +30,12 @@ class GateService : AccessibilityService() {
 
     private val handler = Handler(Looper.getMainLooper())
     private val timer = CheckTimer(SETTLE_MS, DEBOUNCE_MS, FOLLOW_UP_MS, FOLLOW_UPS)
+    private val clock = ScreenClock(TICK_MS, 2 * TICK_MS)
+    private var notice: View? = null
+    private val hideNotice: Runnable = Runnable {
+        notice?.let { getSystemService(WindowManager::class.java).removeView(it) }
+        notice = null
+    }
     private var pendingPackage: String? = null
     private var lastActPackage: String? = null
     private var lastActAt = 0L
@@ -38,8 +52,9 @@ class GateService : AccessibilityService() {
             if (rule.allowTabs.isNotEmpty()) {
                 redirectTabs(rule)
             } else if (blocksWholeApp(rule) || seesHint(rule)) {
-                act(rule)
+                if (limitIsUsedUp(rule)) act(rule)
             } else {
+                clock.stop()
                 timer.foundNothing()?.let { delay ->
                     pendingPackage = target
                     handler.postDelayed(check, delay)
@@ -48,6 +63,12 @@ class GateService : AccessibilityService() {
         } catch (e: RuntimeException) {
             Log.w(TAG, "check failed", e)
         }
+    }
+
+    // A paused video sends no events, so a screen with a limit is looked at on a timer too.
+    private val tick: Runnable = Runnable {
+        val target = clock.watching ?: return@Runnable
+        schedule(target)
     }
 
     override fun onServiceConnected() {
@@ -75,8 +96,12 @@ class GateService : AccessibilityService() {
         val windowJustChanged = event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
         // A whole-app rule only cares about the app opening, not about what it draws.
         if (hints.any { it == "*" } && chooseAction(rule, windowJustChanged, emptyList()) == null) return
+        schedule(packageName, windowJustChanged)
+    }
+
+    private fun schedule(packageName: String, windowChanged: Boolean = false) {
         pendingPackage = packageName
-        timer.onEvent(windowJustChanged)?.let { delay ->
+        timer.onEvent(windowChanged)?.let { delay ->
             handler.removeCallbacks(check)
             handler.postDelayed(check, delay)
         }
@@ -86,6 +111,9 @@ class GateService : AccessibilityService() {
 
     override fun onDestroy() {
         handler.removeCallbacks(check)
+        handler.removeCallbacks(tick)
+        handler.removeCallbacks(hideNotice)
+        hideNotice.run()
         timer.cancel()
         super.onDestroy()
     }
@@ -110,12 +138,53 @@ class GateService : AccessibilityService() {
             DayCount.bump(this)
             BlockLog.record(this, rule.packageName)
             // Look again once the debounce is over: Back does not always leave the screen.
-            pendingPackage = rule.packageName
-            timer.onEvent(windowChanged = false)?.let { delay ->
-                handler.removeCallbacks(check)
-                handler.postDelayed(check, delay)
-            }
+            schedule(rule.packageName)
         }
+    }
+
+    /** The screen is open. Counts the time and says whether the screen has to go now. */
+    private fun limitIsUsedUp(rule: AppRule): Boolean {
+        if (rule.dailyMinutes == 0) return true
+        val target = rule.packageName
+        val limit = limitMs(rule)
+        val before = UsageLog.today(this, target)
+        if (before >= limit) {
+            clock.stop()
+            return true
+        }
+        // A locked phone can keep the app in the active window.
+        if (getSystemService(PowerManager::class.java)?.isInteractive != true) {
+            clock.stop()
+            return false
+        }
+        if (clock.watching != target) BlockLog.seen(this, target)
+        val step = clock.look(target, SystemClock.elapsedRealtime())
+        if (step > 0) UsageLog.add(this, target, step)
+        handler.removeCallbacks(tick)
+        handler.postDelayed(tick, TICK_MS)
+        if (limitWarns(limit, before, before + step)) showNotice(getString(R.string.limit_warning, rule.label))
+        return before + step >= limit
+    }
+
+    /** A toast would need the notification permission: Android drops it from a background app. */
+    private fun showNotice(text: String) {
+        val view = LayoutInflater.from(this).inflate(R.layout.limit_notice, FrameLayout(this), false) as TextView
+        view.text = text
+        val params = WindowManager.LayoutParams(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            PixelFormat.TRANSLUCENT,
+        ).apply {
+            gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+            y = (NOTICE_BOTTOM_DP * resources.displayMetrics.density).toInt()
+        }
+        handler.removeCallbacks(hideNotice)
+        hideNotice.run()
+        getSystemService(WindowManager::class.java).addView(view, params)
+        notice = view
+        handler.postDelayed(hideNotice, NOTICE_MS)
     }
 
     /** Checks the file every few seconds at most, not on every event. */
@@ -247,6 +316,9 @@ class GateService : AccessibilityService() {
         const val FOLLOW_UPS = 2
         const val RULES_CHECK_MS = 3000L
         const val ESCALATE_MS = 2500L
+        const val TICK_MS = 1000L
+        const val NOTICE_MS = 4000L
+        const val NOTICE_BOTTOM_DP = 96
         const val MAX_NODES = 800
         const val TAB_CLASS = "android.app.ActionBar\$Tab"
     }

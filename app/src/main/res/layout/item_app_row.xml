@@ -19,6 +19,7 @@
         android:paddingVertical="10dp">
 
         <LinearLayout
+            android:id="@+id/row_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -38,6 +39,16 @@
                 android:layout_marginTop="2dp"
                 android:textAppearance="@style/TextAppearance.Feedcut.Small"
                 tools:text="Reels · last cut 4 min ago" />
+
+            <TextView
+                android:id="@+id/limit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textAppearance="@style/TextAppearance.Feedcut.Small"
+                android:visibility="gone"
+                tools:text="12 of 20 min used today"
+                tools:visibility="visible" />
         </LinearLayout>
 
         <com.google.android.material.materialswitch.MaterialSwitch

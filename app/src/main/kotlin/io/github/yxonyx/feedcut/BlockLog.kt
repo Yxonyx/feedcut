@@ -17,6 +17,15 @@ object BlockLog {
         }
     }
 
+    /**
+     * The rule found its screen but left it open, because the daily limit is not used up.
+     * That proves the rule works on this version, though nothing was closed.
+     */
+    fun seen(context: Context, packageName: String) {
+        val version = installedVersion(context, packageName) ?: return
+        prefs(context).edit { putLong("$packageName.version", version) }
+    }
+
     fun lastAt(context: Context, packageName: String): Long? =
         prefs(context).getLong("$packageName.at", -1L).takeIf { it >= 0 }
 

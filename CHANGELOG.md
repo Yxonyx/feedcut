@@ -9,6 +9,7 @@ All notable changes to Feedcut. Versions follow [Semantic Versioning](https://se
 - The "Allow restricted settings" hint only shows on Android 13 and later, where the setting exists.
 
 ### Added
+- Daily limits. Tap an app on the main screen and choose how many minutes a day its screen may stay open (`dailyMinutes` in the rules file). Feedcut warns when one minute is left, then cuts the screen for the rest of the day. Without a limit it cuts at once, as before.
 - A rule can no longer block Feedcut itself, Settings, the system UI or the package installer, so the user can always switch Feedcut off.
 - A setup step for OPPO, realme, OnePlus, vivo, iQOO, Huawei and Honor, which have a background switch of their own.
 

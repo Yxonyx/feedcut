@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
 import android.text.format.DateUtils
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
@@ -14,6 +15,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.materialswitch.MaterialSwitch
 
 class MainActivity : AppCompatActivity() {
@@ -183,6 +185,8 @@ class MainActivity : AppCompatActivity() {
                 detail.setTextColor(ContextCompat.getColor(this, R.color.c_warn))
             }
             val installed = health != RuleHealth.NOT_INSTALLED
+            // A tab rule never leaves the screen, so there is nothing to limit.
+            if (installed && rule.enabled && rule.allowTabs.isEmpty()) showLimit(row, index, rule)
             if (!installed) label.setTextColor(ContextCompat.getColor(this, R.color.c_muted))
             val sw = row.findViewById<MaterialSwitch>(R.id.enabled)
             // Nothing to switch for an app that is not there.
@@ -195,6 +199,40 @@ class MainActivity : AppCompatActivity() {
             list.addView(row)
         }
         writing = false
+    }
+
+    private fun showLimit(row: View, index: Int, rule: AppRule) {
+        row.findViewById<TextView>(R.id.limit).apply {
+            visibility = View.VISIBLE
+            text = if (rule.dailyMinutes == 0) {
+                getString(R.string.limit_none)
+            } else {
+                val used = (UsageLog.today(context, rule.packageName) / MS_PER_MINUTE).toInt()
+                getString(R.string.limit_used, used.coerceAtMost(rule.dailyMinutes), rule.dailyMinutes)
+            }
+        }
+        row.findViewById<View>(R.id.row_text).apply {
+            val ripple = TypedValue()
+            context.theme.resolveAttribute(android.R.attr.selectableItemBackground, ripple, true)
+            setBackgroundResource(ripple.resourceId)
+            setOnClickListener { askLimit(index, rule) }
+        }
+    }
+
+    private fun askLimit(index: Int, rule: AppRule) {
+        // A value from the rules file stays selectable, even if it is not one of the presets.
+        val choices = (LIMIT_CHOICES + rule.dailyMinutes).distinct().sorted()
+        val names = choices.map {
+            if (it == 0) getString(R.string.limit_at_once) else getString(R.string.limit_minutes, it)
+        }
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.limit_title, rule.note.ifEmpty { rule.label }))
+            .setSingleChoiceItems(names.toTypedArray(), choices.indexOf(rule.dailyMinutes)) { dialog, which ->
+                dialog.dismiss()
+                update(index) { it.copy(dailyMinutes = choices[which]) }
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     /** Fixed furniture for every app: what it removes, then its state. */
@@ -227,5 +265,9 @@ class MainActivity : AppCompatActivity() {
         if (saveRules { RuleStore.write(this, next) }) shown = next
         renderApps()
         renderStatus()
+    }
+
+    private companion object {
+        val LIMIT_CHOICES = listOf(0, 5, 10, 15, 30, 60)
     }
 }

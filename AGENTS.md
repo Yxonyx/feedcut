@@ -13,6 +13,8 @@ Feedcut is an Android accessibility service that leaves short-video screens (Ree
 | `app/src/main/kotlin/io/github/yxonyx/feedcut/GateService.kt` | The accessibility service. Reads the window, calls `Rules.kt`, presses Back/Home or taps a tab. |
 | `app/src/main/kotlin/io/github/yxonyx/feedcut/RuleStore.kt` | Loads, validates, saves (atomically) and merges the rules file on the phone. |
 | `app/src/main/kotlin/io/github/yxonyx/feedcut/CheckTimer.kt` | When to check: coalescing events, the debounce after an action. Pure, unit tested. |
+| `app/src/main/kotlin/io/github/yxonyx/feedcut/ScreenClock.kt` | Counts how long a screen with a `dailyMinutes` limit stays open. Pure, unit tested. |
+| `app/src/main/kotlin/io/github/yxonyx/feedcut/UsageLog.kt` | Today's time per app, for the daily limits. |
 | `app/src/main/kotlin/io/github/yxonyx/feedcut/BlockLog.kt` | Last block time and app version per package, for the "rule may be broken" hint. |
 | `app/src/test/kotlin/io/github/yxonyx/feedcut/` | Unit tests: rules, timer, rules file parsing (with the real org.json). |
 

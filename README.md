@@ -36,6 +36,7 @@ and keeps Facebook to Marketplace and Groups. It has no internet permission.
 - **Facebook without the feed.** Most blockers either block Facebook or hide Reels. Feedcut keeps the parts people need, Marketplace and Groups, and takes away the feed.
 - **No internet permission.** Check `AndroidManifest.xml`: there is no `INTERNET` permission, so Feedcut cannot send anything anywhere. No account, no analytics, no remote rules.
 - **The rules are a file you can read.** Every blocked screen is a line in [`rules.json`](app/src/main/assets/rules.json). When an app renames a screen, the fix is a one-line pull request, and the in-app editor lets you fix it on your phone the same day.
+- **Cut at once, or after a daily limit.** Each app can have its own limit: 5, 10, 15, 30 or 60 minutes a day, or any number in the rules file. Feedcut warns you when one minute is left, then closes the screen for the rest of the day. The count starts again at midnight.
 - **It tells you when a rule may have broken.** Feedcut remembers the app version at the last screen it closed. If the app updates and nothing has been closed since, the main screen says so, without any network access.
 - **App updates keep your settings.** A new Feedcut version brings new screen markers but keeps your switches and anything you edited.
 
@@ -81,6 +82,7 @@ The order matters. Feedcut does nothing until all four steps are done.
 - `hints`: view ids on the screen you want to leave. Feedcut compares only the visible views' `view-id` with these. It does not read text or images.
 - `*` as a hint: leave the whole app as soon as it opens.
 - `action`: `back` presses Back, `home` goes to the home screen.
+- `dailyMinutes`: how long the screen may stay open each day, from 0 to 1440. Without it, or with 0, Feedcut leaves at once. You can also set it on the main screen by tapping the app. The time counts while the screen is open, also when a video is paused, but not while the phone's screen is off. It does not apply to `allowTabs` rules, which never leave the app.
 - `allowTabs`: for apps with a bottom tab bar. Only these tabs may stay selected, and Feedcut taps the first one when any other tab is selected. Facebook uses `["Marketplace"]`. This is the only place Feedcut reads labels: the bottom tab bar's tab names, nothing else.
 
 Add any app you like from the in-app editor (*Rules file*).
@@ -141,7 +143,7 @@ Using a coding agent? [`AGENTS.md`](AGENTS.md) and the `fix-rule` skill walk it 
 
 ## Privacy
 
-Feedcut asks the system for events only from the apps you switch on. It reads view ids, and for `allowTabs` the bottom tab bar's labels. It stores your rules and a daily counter on the phone. Backup is off, so uninstalling removes everything. There is no network code.
+Feedcut asks the system for events only from the apps you switch on. It reads view ids, and for `allowTabs` the bottom tab bar's labels. It stores your rules, a daily counter and today's time on screens with a limit on the phone. Backup is off, so uninstalling removes everything. There is no network code.
 
 ## Build
 
