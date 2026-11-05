@@ -26,7 +26,7 @@ and keeps Facebook to Marketplace and Groups. It has no internet permission.
 | --- | --- |
 | Instagram | Leaves Reels. Feed, Stories, DMs and search work. |
 | YouTube | Leaves Shorts. Normal videos, search and subscriptions work. |
-| TikTok | Goes to the home screen when the video feed shows. |
+| TikTok | Goes to the home screen when the video feed shows. Not yet confirmed on a device; see [Rule status](#rule-status). |
 | Facebook | Switches Home, Reels, Video and every other tab to Marketplace. The ☰ menu and Groups work. |
 
 ## How it differs from other blockers
@@ -48,7 +48,7 @@ Every release is signed with the same key. To check that an APK is the real one 
 1E:FA:60:DC:75:B6:27:D3:E7:59:EC:F3:39:26:68:42:71:80:C1:24:24:DD:19:F1:3D:98:FC:39:A6:69:5E:AE
 ```
 
-The build is reproducible: two clean builds of the same commit give byte-identical APKs.
+The build is reproducible: building the tagged commit gives the same APK as the release, apart from the signature. See [Verify a release](#verify-a-release).
 
 Android 8.0 or newer (API 26).
 
@@ -126,7 +126,7 @@ Feedcut asks the system for events only from the apps you switch on. It reads vi
 ./gradlew :app:testDebugUnitTest :app:assembleDebug
 ```
 
-JDK 17 or newer. The APK is at `app/build/outputs/apk/debug/app-debug.apk`.
+JDK 17 or newer; releases are built with JDK 21. The APK is at `app/build/outputs/apk/debug/app-debug.apk`.
 
 For a signed release, create `keystore.properties` in the project root (it is git-ignored):
 
@@ -137,7 +137,19 @@ keyAlias=feedcut
 keyPassword=...
 ```
 
-Release builds are shrunk with R8 (about 1.6 MB). Releases are built and signed by the maintainer from the tagged commit; the checksum file next to each APK lets you compare it with your own build.
+Release builds are shrunk with R8 (about 1.6 MB). Releases are built and signed by the maintainer from the tagged commit.
+
+### Verify a release
+
+Without `keystore.properties`, `assembleRelease` gives an unsigned APK. Build the tag with JDK 21, then let [apksigcopier](https://github.com/obfusk/apksigcopier) check that the release is your build plus the maintainer's signature:
+
+```bash
+git checkout v1.1.0
+./gradlew :app:assembleRelease
+apksigcopier compare feedcut-v1.1.0.apk --unsigned app/build/outputs/apk/release/app-release-unsigned.apk
+```
+
+No output and exit code 0 means the APKs match. `apksigcopier` needs `apksigner` from the Android build tools on the `PATH`.
 
 CI can sign releases too. It is off until the repository variable `CI_RELEASE` is `true`; then pushing a `v*` tag builds a signed APK and attaches it to a release. It needs the secrets `FEEDCUT_STORE_BASE64`, `FEEDCUT_STORE_PASSWORD`, `FEEDCUT_KEY_ALIAS` and `FEEDCUT_KEY_PASSWORD` in a protected `release` environment.
 
