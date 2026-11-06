@@ -139,7 +139,7 @@ Using a coding agent? [`AGENTS.md`](AGENTS.md) and [the fix-rule guide](docs/fix
 ### Installing outside a store
 
 - **Android 13 and later** hide the accessibility switch for apps installed from a file until you allow restricted settings. Setup step 2 shows how.
-- **Some countries block the install.** Where Play Protect's enhanced fraud protection is on (for example Singapore, India, Brazil, Thailand, Vietnam, Malaysia), Android refuses apps that ask for accessibility when they come from a browser, chat app or file manager. Installing through an app store client avoids this. Feedcut is being submitted to IzzyOnDroid and F-Droid.
+- **Some countries block the install.** Where Play Protect's enhanced fraud protection is on (for example Singapore, India, Brazil, Thailand, Vietnam, Malaysia), Android refuses apps that ask for accessibility when they come from a browser, chat app or file manager. Installing through an app store client avoids this. Feedcut is not in an app store yet.
 - **Developer verification.** Since September 2026, phones in Brazil, Indonesia, Singapore and Thailand only install apps from verified developers, unless you turn on Android's one-time *advanced flow* (it has a one-day wait). Other countries follow from 2027. Feedcut's developer is not verified yet.
 - **It is an accessibility service, not a lock.** You can switch it off in a few taps. It helps against habit, not against determination. Feedcut never acts on itself, Settings or the system screens, so a rule cannot lock you out.
 
