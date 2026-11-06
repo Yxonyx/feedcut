@@ -2,7 +2,7 @@
 
 All notable changes to Feedcut. Versions follow [Semantic Versioning](https://semver.org); the rules file has its own `version` number, listed with each release.
 
-## Unreleased
+## 1.2.0 (versionCode 3), rules version 4
 
 ### Fixed
 - A screen that was still opening could be missed when the app sent no more events, for example on Android 8. After a window change that showed nothing, Feedcut now checks again twice on its own.

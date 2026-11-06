@@ -1,0 +1,6 @@
+- Daily limits: choose how many minutes a day Reels, Shorts or the TikTok feed may stay open. Feedcut warns one minute before the end, then cuts them until midnight.
+- Tapping back into a cut screen no longer throws you out of the app.
+- Better at catching screens on phones that send few events, such as Android 8.
+- A setup step for OPPO, realme, OnePlus, vivo, iQOO, Huawei and Honor.
+- A rule can no longer block Feedcut, Settings or the installer.
+- License: Apache-2.0.

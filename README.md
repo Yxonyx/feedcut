@@ -169,9 +169,9 @@ Release builds are shrunk with R8 (about 1.6 MB). Releases are built and signed 
 Without `keystore.properties`, `assembleRelease` gives an unsigned APK. Build the tag with JDK 21, then let [apksigcopier](https://github.com/obfusk/apksigcopier) check that the release is your build plus the maintainer's signature:
 
 ```bash
-git checkout v1.1.0
+git checkout v1.2.0
 ./gradlew :app:assembleRelease
-apksigcopier compare feedcut-v1.1.0.apk --unsigned app/build/outputs/apk/release/app-release-unsigned.apk
+apksigcopier compare feedcut-v1.2.0.apk --unsigned app/build/outputs/apk/release/app-release-unsigned.apk
 ```
 
 No output and exit code 0 means the APKs match. `apksigcopier` needs `apksigner` from the Android build tools on the `PATH`.
