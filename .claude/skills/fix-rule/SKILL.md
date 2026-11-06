@@ -45,6 +45,7 @@ For `allowTabs` (apps without view ids, today only Facebook):
 
 - Find the bottom tab bar: nodes with `class="android.app.ActionBar$Tab"`. Their `content-desc` looks like `Marketplace, tab 4 of 6`. Feedcut uses the part before the first comma.
 - If the user's language names the tab differently, add that label to `allowTabs`. Do not replace the existing one.
+- `blockTabs` lists the tabs that are cut. `#1` is the first tab in any language. Add a missing Reels or Video label here.
 
 To add a new app, get its package name with `adb shell dumpsys window | grep mCurrentFocus` and add an entry with `"enabled": false`. New apps are opt-in.
 

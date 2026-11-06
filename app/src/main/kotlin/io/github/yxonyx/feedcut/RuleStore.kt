@@ -142,6 +142,7 @@ object RuleStore {
                     action = action,
                     hints = strings(item.optJSONArray("hints")),
                     allowTabs = strings(item.optJSONArray("allowTabs")),
+                    blockTabs = strings(item.optJSONArray("blockTabs")),
                     note = item.optString("note").trim(),
                     dailyMinutes = dailyMinutes,
                 )
@@ -173,6 +174,9 @@ object RuleStore {
                 .put("hints", hints)
             if (rule.allowTabs.isNotEmpty()) {
                 item.put("allowTabs", JSONArray(rule.allowTabs))
+            }
+            if (rule.blockTabs.isNotEmpty()) {
+                item.put("blockTabs", JSONArray(rule.blockTabs))
             }
             if (rule.note.isNotEmpty()) item.put("note", rule.note)
             if (rule.dailyMinutes > 0) item.put("dailyMinutes", rule.dailyMinutes)

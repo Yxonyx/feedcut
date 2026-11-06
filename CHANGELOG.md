@@ -2,6 +2,14 @@
 
 All notable changes to Feedcut. Versions follow [Semantic Versioning](https://semver.org); the rules file has its own `version` number, listed with each release.
 
+## 1.3.0 (versionCode 4), rules version 5
+
+### Added
+- Home screen widget: the time left of your daily limits, up to three apps, and the feeds cut today. Tap it to open Feedcut.
+
+### Changed
+- Facebook: only the feed and the video tabs are cut now (`blockTabs`). Home, Reels and Video go to Marketplace; notifications, your profile, the menu, settings and Groups stay open. Rules with only `allowTabs` work as before.
+
 ## 1.2.0 (versionCode 3), rules version 4
 
 ### Fixed

@@ -88,7 +88,14 @@ class AdvancedActivity : AppCompatActivity() {
                 row.findViewById<View>(R.id.hints_box).visibility = View.GONE
                 row.findViewById<TextView>(R.id.tabs).apply {
                     visibility = View.VISIBLE
-                    text = getString(R.string.tabs_rule, rule.allowTabs.joinToString(", "))
+                    text = if (rule.blockTabs.isEmpty()) {
+                        getString(R.string.tabs_rule, rule.allowTabs.joinToString(", "))
+                    } else {
+                        val cut = rule.blockTabs.joinToString(", ") {
+                            if (it == FIRST_TAB) getString(R.string.tab_first) else it
+                        }
+                        getString(R.string.tabs_block_rule, cut, rule.allowTabs.first())
+                    }
                 }
                 list.addView(row)
                 return@forEachIndexed

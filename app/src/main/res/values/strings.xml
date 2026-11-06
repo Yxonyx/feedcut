@@ -56,6 +56,11 @@
     <string name="limit_title">Daily limit: %1$s</string>
     <string name="limit_at_once">Cut at once</string>
     <string name="limit_minutes">%1$d min</string>
+    <string name="widget_description">Time left of your daily limits, and the feeds cut today.</string>
+    <string name="widget_min_left">min left</string>
+    <string name="widget_left">%1$d min</string>
+    <string name="widget_used_up">Used up</string>
+    <string name="widget_cuts">Feeds cut today: %1$d</string>
     <string name="limit_warning">%1$s: 1 minute left today.</string>
 
     <string name="advanced_row">Advanced: screen markers and rules file</string>
@@ -67,6 +72,8 @@
     <string name="markers_title">Screen markers</string>
     <string name="hints_help">View ids on the screen to leave, separated by commas. Empty: Feedcut leaves the app alone. A star (*): it leaves the app as soon as it opens. Back or Home: what it presses.</string>
     <string name="hints_label">Screen markers</string>
+    <string name="tabs_block_rule">Cut tabs: %1$s. They open %2$s, and every other tab stays open. Change them in the rules file.</string>
+    <string name="tab_first">first tab</string>
     <string name="tabs_rule">Allowed tab: %1$s. Any other tab opens this one. Change it in the rules file.</string>
     <string name="action_title">Back or Home</string>
     <string name="rules_file_help">Everything above, as one JSON file. Add any app here. A new Feedcut version keeps your edits.</string>

@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        FeedcutWidget.refresh(this)
         shown = RuleStore.readForUi(this) {
             Toast.makeText(this, R.string.rules_recovered, Toast.LENGTH_LONG).show()
         }

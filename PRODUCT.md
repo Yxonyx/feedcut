@@ -12,11 +12,11 @@ Adults who choose to limit their own short-video and feed scrolling. They instal
 
 ## Product Purpose
 
-Feedcut closes Instagram Reels, YouTube Shorts and TikTok the moment they open, or after a daily limit the user sets, and keeps Facebook on Marketplace and Groups by switching every other tab to Marketplace. Success: the user keeps the useful parts of these apps and stops losing time to the feeds, without having to think about it.
+Feedcut closes Instagram Reels, YouTube Shorts and TikTok the moment they open, or after a daily limit the user sets, and takes the feed out of Facebook by switching the Home, Reels and Video tabs to Marketplace. Success: the user keeps the useful parts of these apps and stops losing time to the feeds, without having to think about it.
 
 ## Positioning
 
-The only blocker in its open-source neighbourhood that keeps Facebook useful (Marketplace, Groups) while removing the feed, and it does this with no internet permission and without reading screen text, except the bottom tab bar's labels. Rules are a readable JSON file that ships with each version and merges into the user's own settings on update. The app warns when a rule may have broken after an app update.
+The only blocker in its open-source neighbourhood that keeps Facebook useful (Marketplace, Groups, notifications, profile) while removing the feed, and it does this with no internet permission and without reading screen text, except the bottom tab bar's labels. Rules are a readable JSON file that ships with each version and merges into the user's own settings on update. The app warns when a rule may have broken after an app update.
 
 ## Operating Context
 

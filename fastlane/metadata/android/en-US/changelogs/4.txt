@@ -1,0 +1,2 @@
+- Facebook: only the feed and the video tabs are cut now. Notifications, your profile, the menu, settings and Groups stay open.
+- Home screen widget: the time left of your daily limits and the feeds cut today.

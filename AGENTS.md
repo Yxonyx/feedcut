@@ -4,7 +4,7 @@ Notes for coding agents (Claude Code, Codex, Cursor and others) working on Feedc
 
 ## What this is
 
-Feedcut is an Android accessibility service that leaves short-video screens (Reels, Shorts, TikTok) and keeps Facebook on Marketplace. Plain Kotlin and XML views, no Compose, no network code.
+Feedcut is an Android accessibility service that leaves short-video screens (Reels, Shorts, TikTok) and takes the feed out of Facebook. Plain Kotlin and XML views, no Compose, no network code.
 
 | File | Role |
 | --- | --- |
@@ -15,6 +15,7 @@ Feedcut is an Android accessibility service that leaves short-video screens (Ree
 | `app/src/main/kotlin/io/github/yxonyx/feedcut/CheckTimer.kt` | When to check: coalescing events, the debounce after an action. Pure, unit tested. |
 | `app/src/main/kotlin/io/github/yxonyx/feedcut/ScreenClock.kt` | Counts how long a screen with a `dailyMinutes` limit stays open. Pure, unit tested. |
 | `app/src/main/kotlin/io/github/yxonyx/feedcut/UsageLog.kt` | Today's time per app, for the daily limits. |
+| `app/src/main/kotlin/io/github/yxonyx/feedcut/FeedcutWidget.kt` | Home screen widget: time left of the daily limits and the cuts today. |
 | `app/src/main/kotlin/io/github/yxonyx/feedcut/BlockLog.kt` | Last block time and app version per package, for the "rule may be broken" hint. |
 | `app/src/test/kotlin/io/github/yxonyx/feedcut/` | Unit tests: rules, timer, rules file parsing (with the real org.json). |
 

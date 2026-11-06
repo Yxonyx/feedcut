@@ -1,10 +1,11 @@
-<p>Feedcut closes Instagram Reels, YouTube Shorts and TikTok the moment they open, and keeps Facebook to Marketplace and Groups. The rest of each app keeps working: Instagram feed, Stories and messages, normal YouTube videos and search, Facebook Marketplace and Groups.</p>
+<p>Feedcut closes Instagram Reels, YouTube Shorts and TikTok the moment they open, and takes the feed out of Facebook. The rest of each app keeps working: Instagram feed, Stories and messages, normal YouTube videos and search, Facebook Marketplace, Groups, notifications and your profile.</p>
 
 <p>The TikTok rule has not been confirmed on a device yet. If it does not work for you, please open an issue.</p>
 
-<p><b>How it works.</b> Feedcut is an accessibility service. When an app you switched on shows a short-video screen, Feedcut presses Back or Home. On Facebook it taps the Marketplace tab whenever another tab opens. It recognises screens by their view ids. It does not read your messages, your posts, or what is on screen, except the labels of Facebook's bottom tab bar.</p>
+<p><b>How it works.</b> Feedcut is an accessibility service. When an app you switched on shows a short-video screen, Feedcut presses Back or Home. On Facebook it taps the Marketplace tab when the Home, Reels or Video tab opens. It recognises screens by their view ids. It does not read your messages, your posts, or what is on screen, except the labels of Facebook's bottom tab bar.</p>
 
 <p><b>Daily limits.</b> Do not want to lose a feed completely? Give an app 5 to 60 minutes a day. Feedcut warns you when one minute is left, then closes the screen until midnight.</p>
+<p><b>Widget.</b> A home screen widget shows the time left of your daily limits and the feeds cut today.</p>
 
 <p><b>Private by design.</b></p>
 <ul>

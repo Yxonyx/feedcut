@@ -11,6 +11,7 @@ import java.io.IOException
 internal fun Context.saveRules(write: () -> Unit): Boolean = try {
     write()
     GateStatus.ping(this)
+    FeedcutWidget.refresh(this)
     true
 } catch (_: IOException) {
     Toast.makeText(this, R.string.err_save, Toast.LENGTH_LONG).show()

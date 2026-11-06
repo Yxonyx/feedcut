@@ -15,6 +15,7 @@ class RuleStoreTest {
         assertTrue(rules.version > 0)
         val facebook = rules.apps.single { it.packageName == "com.facebook.katana" }
         assertEquals(listOf("Marketplace"), facebook.allowTabs)
+        assertEquals(listOf(FIRST_TAB, "Reels", "Video"), facebook.blockTabs.take(3))
         assertTrue(rules.apps.all { it.action == "back" || it.action == "home" })
     }
 
@@ -71,5 +72,12 @@ class RuleStoreTest {
             }
             assertEquals(R.string.err_limit, e.res)
         }
+    }
+
+    @Test
+    fun blockedTabsAreReadAndKept() {
+        val json = """{"apps":[{"package":"a.b","enabled":true,"allowTabs":["Market"],"blockTabs":["#1"," Reels "]}]}"""
+        val rule = RuleStore.parse(RuleStore.toJson(RuleStore.parse(json))).apps[0]
+        assertEquals(listOf("#1", "Reels"), rule.blockTabs)
     }
 }

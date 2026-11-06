@@ -85,6 +85,89 @@ class RulesTest {
         assertNull(tabRedirect(listOf("Marketplace"), emptyList()))
     }
 
+    private val blockFeed = listOf(FIRST_TAB, "Reels", "Video")
+
+    @Test
+    fun feedAndVideoTabsGoToTheAllowedTab() {
+        assertEquals(3, tabRedirect(listOf("Marketplace"), bar("Kezdőlap"), blockFeed))
+        assertEquals(3, tabRedirect(listOf("Marketplace"), bar("Reels"), blockFeed))
+    }
+
+    @Test
+    fun tabsOutsideTheBlockListStayOpen() {
+        for (tab in listOf("Ismerősök", "Marketplace", "Értesítések", "Profil")) {
+            assertNull(tab, tabRedirect(listOf("Marketplace"), bar(tab), blockFeed))
+        }
+    }
+
+    @Test
+    fun theFirstTabIsBlockedInAnyLanguage() {
+        val german = listOf(SeenTab("Startseite", true), SeenTab("Marketplace", false))
+        assertEquals(1, tabRedirect(listOf("Marketplace"), german, blockFeed))
+    }
+
+    @Test
+    fun aBlockListLeavesOtherTabBarsAlone() {
+        val groups = listOf(SeenTab("Neked", true), SeenTab("A csoportjaid", false))
+        assertNull(tabRedirect(listOf("Marketplace"), groups, blockFeed))
+    }
+
+    @Test
+    fun blockedTabsArriveWithAnUpdateAndMyChangesStay() {
+        val tabs = AppRule("com.facebook.katana", "Facebook", true, "back", emptyList(), listOf("Marketplace"))
+        val fresh = tabs.copy(blockTabs = blockFeed)
+        val mine = tabs.copy(blockTabs = listOf(FIRST_TAB))
+        assertEquals(blockFeed, mergeRules(RuleSet(listOf(tabs)), RuleSet(listOf(tabs)), RuleSet(listOf(fresh))).apps[0].blockTabs)
+        assertEquals(listOf(FIRST_TAB), mergeRules(RuleSet(listOf(tabs)), RuleSet(listOf(mine)), RuleSet(listOf(fresh))).apps[0].blockTabs)
+    }
+
+    @Test
+    fun theWidgetListsInstalledAppsWithALimit() {
+        val limited = ig.copy(dailyMinutes = 20)
+        val rules = listOf(
+            limited,
+            yt,
+            limited.copy(packageName = "off", enabled = false),
+            limited.copy(packageName = "gone"),
+            limited.copy(packageName = "tabs", allowTabs = listOf("Marketplace")),
+        )
+        assertEquals(listOf(limited), limitsToShow(rules) { it != "gone" })
+    }
+
+    @Test
+    fun theWidgetHasThreeRows() {
+        val many = (1..5).map { ig.copy(packageName = "app$it", dailyMinutes = 5) }
+        assertEquals(listOf("app1", "app2", "app3"), limitsToShow(many) { true }.map { it.packageName })
+    }
+
+    @Test
+    fun minutesLeftRoundsUpUntilTheLimitIsSpent() {
+        val five = ig.copy(dailyMinutes = 5)
+        assertEquals(5, minutesLeft(five, 0))
+        assertEquals(5, minutesLeft(five, MS_PER_MINUTE - 1))
+        assertEquals(4, minutesLeft(five, MS_PER_MINUTE))
+        assertEquals(1, minutesLeft(five, limitMs(five) - 1))
+        assertEquals(0, minutesLeft(five, limitMs(five)))
+        assertEquals(0, minutesLeft(five, limitMs(five) + MS_PER_MINUTE))
+    }
+
+    @Test
+    fun theWidgetLeadsWithTheLimitClosestToItsEnd() {
+        val first = ig.copy(packageName = "first", dailyMinutes = 10)
+        val second = ig.copy(packageName = "second", dailyMinutes = 20)
+        val used = mapOf("first" to 0L, "second" to 19 * MS_PER_MINUTE)
+        assertEquals(listOf("second", "first"), byTimeLeft(listOf(first, second)) { used.getValue(it) }.map { it.packageName })
+    }
+
+    @Test
+    fun theBarShowsWhatIsLeft() {
+        val ten = ig.copy(dailyMinutes = 10)
+        assertEquals(BAR_STEPS, stepsLeft(ten, 0))
+        assertEquals(BAR_STEPS / 2, stepsLeft(ten, 5 * MS_PER_MINUTE))
+        assertEquals(0, stepsLeft(ten, limitMs(ten)))
+        assertEquals(0, stepsLeft(ten, limitMs(ten) + MS_PER_MINUTE))
+    }
+
     @Test
     fun tabLabelTakesFirstPart() {
         assertEquals("Marketplace", tabLabel("Marketplace, 4. lap, összesen 6"))

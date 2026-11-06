@@ -4,7 +4,7 @@
 
 <p align="center">
 An Android app that closes Instagram Reels, YouTube Shorts and TikTok the moment they open,<br>
-and keeps Facebook to Marketplace and Groups. It has no internet permission.
+and takes the feed out of Facebook. It has no internet permission.
 </p>
 
 <p align="center">
@@ -29,14 +29,15 @@ and keeps Facebook to Marketplace and Groups. It has no internet permission.
 | Instagram | Leaves Reels. Feed, Stories, DMs and search work. |
 | YouTube | Leaves Shorts. Normal videos, search and subscriptions work. |
 | TikTok | Goes to the home screen when the video feed shows. Not yet confirmed on a device; see [Rule status](#rule-status). |
-| Facebook | Switches Home, Reels, Video and every other tab to Marketplace. The ☰ menu and Groups work. |
+| Facebook | Switches Home, Reels and Video to Marketplace. Notifications, your profile, the ☰ menu, settings and Groups work. |
 
 ## How it differs from other blockers
 
-- **Facebook without the feed.** Most blockers either block Facebook or hide Reels. Feedcut keeps the parts people need, Marketplace and Groups, and takes away the feed.
+- **Facebook without the feed.** Most blockers either block Facebook or hide Reels. Feedcut takes away the feed and the videos and leaves the rest: Marketplace, Groups, notifications and your profile.
 - **No internet permission.** Check `AndroidManifest.xml`: there is no `INTERNET` permission, so Feedcut cannot send anything anywhere. No account, no analytics, no remote rules.
 - **The rules are a file you can read.** Every blocked screen is a line in [`rules.json`](app/src/main/assets/rules.json). When an app renames a screen, the fix is a one-line pull request, and the in-app editor lets you fix it on your phone the same day.
 - **Cut at once, or after a daily limit.** Each app can have its own limit: 5, 10, 15, 30 or 60 minutes a day, or any number in the rules file. Feedcut warns you when one minute is left, then closes the screen for the rest of the day. The count starts again at midnight.
+- **See what is left.** A home screen widget shows the time left of your daily limits and the feeds cut today. It redraws while you watch; otherwise Android refreshes it about every 30 minutes, so just after midnight it can show yesterday for a while.
 - **It tells you when a rule may have broken.** Feedcut remembers the app version at the last screen it closed. If the app updates and nothing has been closed since, the main screen says so, without any network access.
 - **App updates keep your settings.** A new Feedcut version brings new screen markers but keeps your switches and anything you edited.
 
@@ -83,7 +84,8 @@ The order matters. Feedcut does nothing until all four steps are done.
 - `*` as a hint: leave the whole app as soon as it opens.
 - `action`: `back` presses Back, `home` goes to the home screen.
 - `dailyMinutes`: how long the screen may stay open each day, from 0 to 1440. Without it, or with 0, Feedcut leaves at once. You can also set it on the main screen by tapping the app. The time counts while the screen is open, also when a video is paused, but not while the phone's screen is off. It does not apply to `allowTabs` rules, which never leave the app.
-- `allowTabs`: for apps with a bottom tab bar. Only these tabs may stay selected, and Feedcut taps the first one when any other tab is selected. Facebook uses `["Marketplace"]`. This is the only place Feedcut reads labels: the bottom tab bar's tab names, nothing else.
+- `allowTabs`: for apps with a bottom tab bar. Feedcut taps the first of these when a cut tab is selected, and only acts on a tab bar that contains one of them. Facebook uses `["Marketplace"]`. Tab names are the only labels Feedcut reads.
+- `blockTabs`: the tabs that are cut, used with `allowTabs`. `#1` means the first tab of the bar in any language, which on Facebook is the feed. Facebook uses `#1`, `Reels` and the word for Video in common languages. Without `blockTabs`, every tab outside `allowTabs` is cut.
 
 Add any app you like from the in-app editor (*Rules file*).
 
@@ -94,7 +96,7 @@ Apps rename their screens without notice, so every rule has a date. If a rule he
 | Rule | Last checked | On |
 | --- | --- | --- |
 | Instagram Reels | 2026-11-02 | Xiaomi 17, HyperOS, Android 16 |
-| Facebook tab bar | 2026-11-02 | Xiaomi 17, HyperOS, Android 16, Hungarian UI |
+| Facebook tab bar | 2026-11-06 | Xiaomi 17, HyperOS, Android 16, Hungarian UI |
 | YouTube Shorts | 2026-11-05 | Android 16 emulator, YouTube 21.42.243, release build |
 | TikTok | not checked | |
 
@@ -120,7 +122,7 @@ Using a coding agent? [`AGENTS.md`](AGENTS.md) and the `fix-rule` skill walk it 
 | Android 8.0 to 16 (API 26 to 36) | Yes | Tested on Android 16 (Xiaomi 17 and emulator) and Android 8.0 (emulator). Android 7 and older cannot install it. |
 | Pixel, Motorola, Nokia, Sony, stock Android | Yes | The accessibility service and *Battery: Unrestricted*. |
 | Samsung | Should work | *Battery: Unrestricted* also takes Feedcut off Samsung's sleeping apps list. Not tested on a Samsung yet. |
-| Xiaomi, Redmi, POCO (MIUI, HyperOS) | Yes | Also *No restrictions* and *Autostart*, or HyperOS freezes Feedcut after a few minutes. Tested on a Xiaomi 17. |
+| Xiaomi, Redmi, POCO (MIUI, HyperOS) | Yes | Also *No restrictions* and *Autostart*, or HyperOS freezes Feedcut after a few minutes. Lock Feedcut's card in the recent apps too: *Clear all* stops it and switches the service off. Tested on a Xiaomi 17. |
 | OPPO, realme, OnePlus, vivo, iQOO, Huawei, Honor | Should work | These systems have one more background switch. Feedcut shows it as a setup step with a link to the steps for your phone. Not tested. |
 
 **Why it works on so many phones.** Feedcut uses only the standard accessibility API that has been in Android for years: it reads view ids and presses Back or Home. It needs no root, no Google services and no internet connection, so it also runs on phones without Google (custom ROMs, Huawei with apps from other stores). Most failures on a given phone come from the phone maker's battery manager stopping the service, which is why setup asks for the battery settings.
@@ -128,7 +130,7 @@ Using a coding agent? [`AGENTS.md`](AGENTS.md) and the `fix-rule` skill walk it 
 ### It will not work
 
 - **Instagram Lite and Facebook Lite.** They draw their own screens without view ids, so there is nothing to recognise.
-- **Facebook in a language where the tab is not called "Marketplace".** `allowTabs` matches the label before the first comma ("Marketplace, tab 4 of 6"). In most languages, including English and Hungarian, it is "Marketplace". If yours differs, add your label to `allowTabs` in the rules file.
+- **Facebook in a language where the tab is not called "Marketplace".** `allowTabs` matches the label before the first comma ("Marketplace, tab 4 of 6"). In most languages, including English and Hungarian, it is "Marketplace". If yours differs, add your label to `allowTabs` in the rules file. If a video tab has a name that is not in `blockTabs`, add it there.
 - **In a browser.** facebook.com, instagram.com and youtube.com work as usual.
 - **With Advanced Protection on** (from Android 17). It turns off accessibility services that are not accessibility tools. Feedcut is not one and does not claim to be.
 - **After an app update that renames a screen.** The main screen warns when this may have happened. See [When a rule stops working](#when-a-rule-stops-working).
@@ -143,7 +145,7 @@ Using a coding agent? [`AGENTS.md`](AGENTS.md) and the `fix-rule` skill walk it 
 
 ## Privacy
 
-Feedcut asks the system for events only from the apps you switch on. It reads view ids, and for `allowTabs` the bottom tab bar's labels. It stores your rules, a daily counter and today's time on screens with a limit on the phone. Backup is off, so uninstalling removes everything. There is no network code.
+Feedcut asks the system for events only from the apps you switch on. It reads view ids, and for `allowTabs` the bottom tab bar's labels. It stores your rules, a daily counter and today's time on screens with a limit on the phone. The home screen widget shows these numbers and nothing else. Backup is off, so uninstalling removes everything. There is no network code.
 
 ## Build
 
@@ -169,9 +171,9 @@ Release builds are shrunk with R8 (about 1.6 MB). Releases are built and signed 
 Without `keystore.properties`, `assembleRelease` gives an unsigned APK. Build the tag with JDK 21, then let [apksigcopier](https://github.com/obfusk/apksigcopier) check that the release is your build plus the maintainer's signature:
 
 ```bash
-git checkout v1.2.0
+git checkout v1.3.0
 ./gradlew :app:assembleRelease
-apksigcopier compare feedcut-v1.2.0.apk --unsigned app/build/outputs/apk/release/app-release-unsigned.apk
+apksigcopier compare feedcut-v1.3.0.apk --unsigned app/build/outputs/apk/release/app-release-unsigned.apk
 ```
 
 No output and exit code 0 means the APKs match. `apksigcopier` needs `apksigner` from the Android build tools on the `PATH`.

@@ -288,13 +288,19 @@ The same column, gutter and headline as the main screen, in three sections set a
 - **Rule rows:** hairline-ruled like app rows. App name in body over the package in body small (one line, middle-ellipsized), the Back/Home toggle at the end, the markers field below.
 - **Back/Home toggle:** two outlined segments with cut-board corners and condensed uppercase labels. The chosen segment is painted ink with a ground-coloured label; the other stays bare. Never red: this is a setting, not the next step.
 - **Markers field:** Material outlined text field with 3dp corners, lichen stroke turning ink on focus. The ids are monospace; the floating label stays in the system sans.
-- **Tab rules:** a rule with `allowTabs` (Facebook) shows no toggle and no field, only a body-small line naming the allowed tab, because Back, Home and markers do not apply to it.
+- **Tab rules:** a rule with `allowTabs` (Facebook) shows no toggle and no field, only a body-small line naming the cut tabs and the tab they open, because Back, Home and markers do not apply to it.
 
 ### Rules File Editor
 Headline, one body-small line saying that a file that cannot be read is not saved, then the raw JSON on a cut board (surface paint, 1dp hairline edge, 3dp corners, 12dp padding, 13sp monospace). The filled Save button sits below it; it is the screen's one next step. Back with unsaved edits asks first.
 
 ### Dialogs
 Material alert dialogs with cut-board corners (3dp). Both buttons use the condensed uppercase label face in ink. Red text is not used here, since red on the dialog surface falls under 4.5:1 in the dark scheme.
+
+### Home Screen Widget
+The main screen's Today Count at home screen size, on the ground colour of the current scheme with a 1dp hairline edge. A display numeral beside a label column leads: the limit that runs out first, as minutes left, the app below in body small, a 14x20dp waymark at the top end and a 6dp bar of what is left in the primary red. Other limits follow as ruled rows, app name in the system sans, time in the condensed bold. Without a limit, the numeral is the count of today's cuts with "≈ N min kept" below it. A spent limit says "Used up" and empties the bar; it is not a warning, so it stays out of trail yellow.
+- **Signage is painted:** launchers cannot load Barlow Condensed, so the numeral, the unit and the row times are drawn into white bitmaps and tinted from the layout. The tint keeps light and dark following the launcher, and each image carries its text as a content description.
+- **Corners:** the system's widget radius from Android 12, because the board sits among the launcher's own widgets and not all launchers clip it; the cut-board 3dp below that.
+- **Below 140dp high:** only the numeral, its labels and the bar.
 
 ### Launcher Mark
 An adaptive icon on granite: three blaze-white boards (a feed of posts) sliced on a 28 degree cut, the halves slid apart along it, with a blaze red band lying in the cut. The monochrome layer leaves the cut empty. Icon layers and `docs/logo.svg` are generated from one geometry by `tools/make_icon.py`; change the script, not its output.

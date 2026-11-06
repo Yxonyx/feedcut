@@ -138,6 +138,7 @@ class GateService : AccessibilityService() {
             lastActAt = now
             DayCount.bump(this)
             BlockLog.record(this, rule.packageName)
+            FeedcutWidget.refresh(this)
             // Look again once the debounce is over: Back does not always leave the screen.
             schedule(rule.packageName)
         }
@@ -164,6 +165,7 @@ class GateService : AccessibilityService() {
         handler.removeCallbacks(tick)
         handler.postDelayed(tick, TICK_MS)
         if (limitWarns(limit, before, before + step)) showNotice(getString(R.string.limit_warning, rule.label))
+        if (minutesLeft(rule, before) != minutesLeft(rule, before + step)) FeedcutWidget.refresh(this)
         return before + step >= limit
     }
 
@@ -256,7 +258,7 @@ class GateService : AccessibilityService() {
             if (root.packageName?.toString() != rule.packageName) return
             collectTabs(root, tabs, intArrayOf(MAX_NODES), recycleSelf = false)
             val seen = tabs.map { SeenTab(tabLabel(it.contentDescription), it.isSelected) }
-            val target = tabRedirect(rule.allowTabs, seen) ?: return
+            val target = tabRedirect(rule.allowTabs, seen, rule.blockTabs) ?: return
             act(rule, tabs[target])
         } finally {
             tabs.forEach { it.recycle() }

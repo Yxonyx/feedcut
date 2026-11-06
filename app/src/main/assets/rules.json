@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "apps": [
     {
       "package": "com.instagram.android",
@@ -44,11 +44,12 @@
     {
       "package": "com.facebook.katana",
       "label": "Facebook",
-      "note": "Only Marketplace and Groups",
+      "note": "The feed, Reels and Video",
       "enabled": true,
       "action": "back",
       "hints": [],
-      "allowTabs": ["Marketplace"]
+      "allowTabs": ["Marketplace"],
+      "blockTabs": ["#1", "Reels", "Video", "Videó", "Vidéo", "Vídeo", "Videos"]
     }
   ]
 }

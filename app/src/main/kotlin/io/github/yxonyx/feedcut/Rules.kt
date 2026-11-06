@@ -21,7 +21,9 @@ data class AppRule(
     val action: String,
     val hints: List<String>,
     val allowTabs: List<String> = emptyList(),
-    /** What the rule removes, in a few words for the main screen ("Reels", "Only Marketplace"). */
+    /** Tabs that are cut, by label or [FIRST_TAB]. Empty: every tab outside allowTabs is cut. */
+    val blockTabs: List<String> = emptyList(),
+    /** What the rule removes, in a few words for the main screen ("Reels", "The feed, Reels and Video"). */
     val note: String = "",
     /** Minutes a day the screen may stay open before it is cut. 0: cut it at once. */
     val dailyMinutes: Int = 0,
@@ -94,6 +96,26 @@ fun limitMs(rule: AppRule): Long = rule.dailyMinutes * MS_PER_MINUTE
 fun limitWarns(limit: Long, usedBefore: Long, usedNow: Long): Boolean =
     limit - usedBefore > MS_PER_MINUTE && limit - usedNow <= MS_PER_MINUTE
 
+/** Whole minutes left, rounded up: 0 only when the limit is really spent. */
+fun minutesLeft(rule: AppRule, usedMs: Long): Int {
+    val left = limitMs(rule) - usedMs
+    return if (left <= 0) 0 else ((left + MS_PER_MINUTE - 1) / MS_PER_MINUTE).toInt()
+}
+
+/** Steps of the widget's bar still painted, out of [BAR_STEPS]. */
+fun stepsLeft(rule: AppRule, usedMs: Long): Int =
+    ((limitMs(rule) - usedMs).coerceAtLeast(0) * BAR_STEPS / limitMs(rule)).toInt()
+
+/** The widget leads with the limit that runs out first. */
+fun byTimeLeft(rules: List<AppRule>, used: (String) -> Long): List<AppRule> =
+    rules.sortedBy { limitMs(it) - used(it.packageName) }
+
+/** The apps the home screen widget lists, in the order of the rules file. */
+fun limitsToShow(rules: List<AppRule>, installed: (String) -> Boolean): List<AppRule> =
+    rules
+        .filter { it.enabled && it.dailyMinutes > 0 && it.allowTabs.isEmpty() && installed(it.packageName) }
+        .take(WIDGET_ROWS)
+
 fun tabLabel(contentDescription: CharSequence?): String =
     contentDescription?.toString()?.substringBefore(',')?.trim().orEmpty()
 
@@ -101,13 +123,17 @@ fun tabLabel(contentDescription: CharSequence?): String =
  * Which tab to tap. A tab bar is recognised by containing an allowed tab.
  * Without one (menu, group, ad) the screen is left alone.
  */
-fun tabRedirect(allow: List<String>, tabs: List<SeenTab>): Int? {
+fun tabRedirect(allow: List<String>, tabs: List<SeenTab>, block: List<String> = emptyList()): Int? {
     if (allow.isEmpty()) return null
     val allowed = tabs.indexOfFirst { tab -> allow.any { it.equals(tab.label, ignoreCase = true) } }
     if (allowed < 0) return null
-    val selected = tabs.firstOrNull { it.selected } ?: return null
-    if (allow.any { it.equals(selected.label, ignoreCase = true) }) return null
-    return allowed
+    val selected = tabs.indexOfFirst { it.selected }
+    if (selected < 0) return null
+    val label = tabs[selected].label
+    if (allow.any { it.equals(label, ignoreCase = true) }) return null
+    if (block.isEmpty()) return allowed
+    val cut = block.any { if (it == FIRST_TAB) selected == 0 else it.equals(label, ignoreCase = true) }
+    return if (cut) allowed else null
 }
 
 /**
@@ -147,6 +173,7 @@ fun mergeRules(base: RuleSet?, user: RuleSet, bundled: RuleSet): RuleSet {
                 action = pick(AppRule::action, keepWithoutBase = true),
                 hints = pick(AppRule::hints, keepWithoutBase = false),
                 allowTabs = pick(AppRule::allowTabs, keepWithoutBase = false),
+                blockTabs = pick(AppRule::blockTabs, keepWithoutBase = false),
                 note = pick(AppRule::note, keepWithoutBase = false),
                 dailyMinutes = mine.dailyMinutes,
             )
@@ -195,6 +222,12 @@ fun gateState(enabled: Boolean, running: Boolean): GateState = when {
 const val MINUTES_PER_CUT = 1
 
 const val BACKS_BEFORE_HOME = 3
+const val WIDGET_ROWS = 3
+const val BAR_STEPS = 1000
+
+/** In blockTabs: the first tab of the bar, which needs no label and works in every language. */
+const val FIRST_TAB = "#1"
+
 const val MS_PER_MINUTE = 60_000L
 const val MAX_DAILY_MINUTES = 24 * 60
 
