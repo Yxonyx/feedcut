@@ -1,8 +1,3 @@
----
-name: fix-rule
-description: Fix a Feedcut rule that stopped working after an app update, or add a rule for a new app or screen. Use when Feedcut no longer leaves Reels, Shorts, TikTok or a Facebook tab, when it closes a screen it should not, or when someone wants to block a new app's screen. Needs a phone or emulator over adb.
----
-
 # Fix or add a Feedcut rule
 
 Work through the steps in order. Most "broken rule" reports are a device problem (step 1), not a rule problem.

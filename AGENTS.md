@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Notes for coding agents (Claude Code, Codex, Cursor and others) working on Feedcut. People can read it too.
+Notes for coding agents working on Feedcut. People can read it too.
 
 ## What this is
 
@@ -39,7 +39,7 @@ JDK 17 or newer. Lint must pass with no errors; CI runs the same command.
 
 ## Fixing or adding a rule
 
-Follow `.claude/skills/fix-rule/SKILL.md`. Agents without skill support can read that file directly; it is plain Markdown.
+Follow `docs/fix-rule.md`.
 
 ## Things that look like bugs but are not
 

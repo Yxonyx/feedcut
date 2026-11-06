@@ -113,7 +113,7 @@ grep -o 'resource-id="[^"]*"' screen.xml | sort -u
 
 If the dump fails while a video plays, pause it first. Then open an issue with the *Broken rule* template, or send a pull request that changes `rules.json` and bumps its `version`.
 
-Using a coding agent? [`AGENTS.md`](AGENTS.md) and the `fix-rule` skill walk it through the same steps.
+Using a coding agent? [`AGENTS.md`](AGENTS.md) and [the fix-rule guide](docs/fix-rule.md) walk it through the same steps.
 
 ## Who it works for
 

@@ -10,5 +10,4 @@ captures/
 /keystore.properties
 *.jks
 *.keystore
-.claude/settings.local.json
 .impeccable/

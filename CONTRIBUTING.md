@@ -4,7 +4,7 @@ Thanks for helping. Feedcut is maintained by one person in their free time, so s
 
 ## What is welcome
 
-- **Rule fixes and new rules.** These are the most useful contributions. Follow [the fix-rule guide](.claude/skills/fix-rule/SKILL.md), bump `version` in `rules.json` and update the *Rule status* table in the README.
+- **Rule fixes and new rules.** These are the most useful contributions. Follow [the fix-rule guide](docs/fix-rule.md), bump `version` in `rules.json` and update the *Rule status* table in the README.
 - **Reports from other phones.** Open an issue with the phone, the Android version and what worked.
 - **Translations.** Add `app/src/main/res/values-<lang>/strings.xml`.
 - **Bug fixes** with a test where the logic allows one.
